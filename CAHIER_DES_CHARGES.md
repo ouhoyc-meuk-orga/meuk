@@ -204,8 +204,26 @@ js/
 README.md               installation, GitHub Pages, suppression de la passkey
 ```
 
-## 13. État actuel
+## 13. Décisions complémentaires (4 octobre 2026)
 
-- Plan validé dans ses grandes lignes ; **aucun code écrit**.
-- Prochaine action : confirmer le nom de l'organisation, puis attendre le **feu vert** de l'utilisateur pour
-  commencer l'**étape 0** (test PRF).
+- Nom de l'organisation **confirmé** : `ouhoyc-meuk-orga` (RP ID définitif : `ouhoyc-meuk-orga.github.io`).
+- Publication : GitHub Pages publie la branche **`main`** (racine). Chaque étape arrive par une demande de
+  fusion que l'utilisateur valide. Recommander une protection de `main` (aucune modification sans son accord).
+- La passkey créée à l'étape 0 est **jetable** (aucune donnée protégée) : aider l'utilisateur à la supprimer
+  dans l'app Mots de passe, puis à créer la vraie à l'étape 2. Toujours prévenir avant toute action
+  irréversible (la suppression de la vraie passkey rend la phrase de secours indispensable).
+- Verrouillage automatique après **5 minutes** d'inactivité (en plus du passage en arrière-plan).
+- Nom affiché sous l'icône : **Meuk**. Icône : **symbole dollar ($) vert sur fond noir** (choix assumé,
+  même si les montants sont en euros).
+- Phrase de secours : **une seule vérification** à la création (retaper quelques mots tirés au hasard).
+- Historique : s'arrête à **aujourd'hui**. Les dépenses prévues futures apparaissent dans une partie
+  **« À venir »**, affichée seulement s'il y en a (emplacement exact à décider à l'étape 5).
+- **Reportés** (à trancher plus tard avec l'utilisateur) :
+  - à la confirmation « Payée », la prévue garde-t-elle sa date ou prend-elle l'heure de confirmation ? (étape 4)
+  - récurrentes : heure des dépenses générées, prise en compte ou non du mois en cours à la création. (étape 7)
+
+## 14. État actuel
+
+- Plan validé ; feu vert donné pour l'**étape 0** (test PRF).
+- Étape 0 : page de test à la racine (`index.html`, `js/test-prf.js`, `css/test-prf.css`), remplacée par
+  l'app à l'étape 1.

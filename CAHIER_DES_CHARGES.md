@@ -231,7 +231,9 @@ README.md               installation, GitHub Pages, suppression de la passkey
     jamais la raison ; prévoir un simple message « Déverrouillage annulé — réessayer ».
   - La passkey de test « Meuk (test) » existe encore : la faire supprimer au début de l'étape 2.
   - Rappeler de ne jamais utiliser l'app en navigation privée (données effacées à la fermeture).
-- **Étape 1 en cours** : socle (structure, CSP, manifest, icônes, service worker, bannière de mise à jour,
-  version 0.1.0). Fichiers : `index.html`, `manifest.webmanifest`, `sw.js`, `css/app.css`, `js/app.js`,
+- **Étape 1 validée sur l'iPhone** (installation écran d'accueil, plein écran, hors connexion / mode avion OK).
+  Fichiers : `index.html`, `manifest.webmanifest`, `sw.js`, `css/app.css`, `js/app.js`,
   `js/format.js`, `js/update.js`, `js/version.js`, `icons/` (dont `icon.svg`, source des PNG).
   La version est dupliquée dans `js/version.js` et `sw.js` (doivent rester identiques).
+  - `main` protégée par un ruleset (pas de suppression, pas de force push, demande de fusion obligatoire).
+  - Version 0.1.1 publiée uniquement pour tester la bannière de mise à jour sur l'iPhone.

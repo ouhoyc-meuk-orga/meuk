@@ -5,7 +5,7 @@
 'use strict';
 
 // Doit être identique à js/version.js.
-const VERSION = '0.2.2';
+const VERSION = '0.3.0';
 const CACHE = 'meuk-' + VERSION;
 
 const FILES = [
@@ -17,12 +17,14 @@ const FILES = [
   'js/auth.js',
   'js/crypto.js',
   'js/db.js',
+  'js/expenses.js',
   'js/format.js',
   'js/lock.js',
   'js/update.js',
   'js/vault.js',
   'js/version.js',
   'js/views/security.js',
+  'js/views/today.js',
   'js/wordlist-fr.js',
   'icons/apple-touch-icon.png',
   'icons/favicon-32.png',

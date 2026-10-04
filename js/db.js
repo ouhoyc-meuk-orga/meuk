@@ -60,3 +60,15 @@ export function getVault() {
 export function putVault(vault) {
   return run('vault', 'readwrite', (store) => store.put(vault, VAULT_KEY));
 }
+
+export function getAllRecords() {
+  return run('records', 'readonly', (store) => store.getAll());
+}
+
+export function putRecord(record) {
+  return run('records', 'readwrite', (store) => store.put(record));
+}
+
+export function deleteRecord(id) {
+  return run('records', 'readwrite', (store) => store.delete(id));
+}

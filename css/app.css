@@ -323,3 +323,103 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .field span { color: var(--muted); font-size: 15px; }
+
+/* Saisie et liste des dépenses */
+.card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.entry-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+.amount-field {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  border-bottom: 1px solid var(--separator);
+  padding-bottom: 6px;
+}
+
+.amount-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 40px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.amount-field input:focus { outline: none; }
+.amount-field .currency { font-size: 32px; font-weight: 600; color: var(--muted); }
+
+.label-field { background: var(--bg); border-color: transparent; }
+
+.form-error { margin: 0; color: #ff453a; font-weight: 500; }
+.form-error:empty { display: none; }
+
+.day-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 4px 8px;
+  color: var(--muted);
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.day-total {
+  color: var(--fg);
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.expense-list:empty { display: none; }
+.expense-list li { padding: 0; }
+
+.expense-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.expense-list li:last-child .expense-row { border-bottom: 0; }
+.expense-row:active { background: var(--separator); }
+
+.expense-main { display: flex; flex-direction: column; min-width: 0; }
+.expense-label { font-weight: 600; overflow-wrap: anywhere; }
+.expense-time { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.expense-amount { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.expense-row.is-new { animation: flash 1.2s ease-out; }
+@keyframes flash { from { background: rgba(48, 209, 88, 0.35); } to { background: transparent; } }
+
+.empty { margin: 8px 4px; color: var(--muted); text-align: center; }
+
+/* Feuille de modification */
+.sheet-title-small { font-size: 28px !important; }
+
+.datetime-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.datetime-fields .field { margin: 0; }
+.datetime-fields input { min-height: 44px; min-width: 0; width: 100%; -webkit-appearance: none; appearance: none; }
+
+.button-danger {
+  margin-top: 16px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: #ff453a;
+  font-weight: 600;
+}

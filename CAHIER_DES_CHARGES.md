@@ -266,7 +266,19 @@ README.md               installation, GitHub Pages, suppression de la passkey
   contenu masqué et clé oubliée tout de suite, rechargement au retour → Face ID automatique comme à
   l'ouverture. Inactivité / « Verrouiller maintenant » → rechargement immédiat SANS Face ID automatique
   (marqueur `#verrouille` dans l'adresse, retiré au démarrage). Une saisie non validée est perdue au
-  verrouillage. Résultat au retour d'une autre app sur l'iPhone : à confirmer.
+  verrouillage. **Validé sur l'iPhone** : la fenêtre Face ID s'ouvre seule à l'ouverture ET au retour.
+- **Étape 3 en cours** (version 0.3.0) — Aujourd'hui : saisie, liste du jour, total, modification, suppression.
+  - Fiche chiffrée (magasin `records`) : `{ id, box: { iv, ct } }` ; contenu chiffré
+    `{ type: 'expense', v: 1, amount, label, at }` ; l'`id` est lié au chiffrement (données additionnelles
+    authentifiées) : une fiche échangée ou recopiée devient illisible (signalée, ignorée).
+  - `amount` en centimes entiers (1 à 99 999 999, soit 999 999,99 € au plus) ; `at` = heure locale du
+    téléphone « AAAA-MM-JJTHH:MM:SS » (insensible aux fuseaux horaires).
+  - Saisie du montant filtrée à la frappe (chiffres, une virgule ou un point, 2 décimales, 6 chiffres
+    avant la virgule) ; libellé obligatoire, 100 caractères au plus.
+  - Modification : montant, libellé, date, heure (si l'iPhone ne propose que HH:MM, les secondes d'origine
+    sont gardées quand l'heure ne change pas, sinon :00). Dates futures refusées jusqu'à l'étape 4.
+  - Suppression avec confirmation (fenêtre native d'iOS).
+  - Les dépenses déchiffrées ne vivent qu'en mémoire ; vidées au verrouillage.
 - Choix techniques de l'étape 2 :
   - Face ID n'est déclenché que par un appui de bouton (exigence iOS) : la création demande donc deux
     appuis + Face ID (créer la passkey, puis activer le chiffrement), le déverrouillage un appui.

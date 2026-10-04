@@ -6,32 +6,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="light dark">
-  <title>Meuk — test Face ID</title>
-  <link rel="stylesheet" href="css/test-prf.css">
-  <script src="js/test-prf.js" defer></script>
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Meuk">
+  <meta name="format-detection" content="telephone=no">
+  <title>Meuk</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
+  <header class="topbar">
+    <h1 id="view-title">Aujourd'hui</h1>
+    <button id="btn-settings" class="icon-button" type="button" aria-label="Réglages">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div id="update-banner" class="banner" role="status" hidden>
+    <p>Une nouvelle version de Meuk est disponible.</p>
+    <div class="banner-actions">
+      <button id="btn-update-later" type="button" class="button-secondary">Plus tard</button>
+      <button id="btn-update-apply" type="button" class="button-primary">Mettre à jour</button>
+    </div>
+  </div>
+
   <main>
-    <h1>Meuk — test Face ID</h1>
-    <p class="intro">Page de test (étape 0). Elle n'enregistre rien et n'envoie rien.</p>
-
-    <section>
-      <h2>1. Créer la passkey de test</h2>
-      <p>À faire une seule fois. iOS va demander Face ID et proposer d'enregistrer « Meuk (test) ».</p>
-      <button id="btn-create" type="button">Créer la passkey de test</button>
+    <section id="view-today" class="view" data-title="Aujourd'hui">
+      <p id="today-date" class="date-heading"></p>
+      <p class="placeholder">La saisie des dépenses arrive à l'étape 3.</p>
     </section>
-
-    <section>
-      <h2>2. Tester Face ID + clé</h2>
-      <p>À faire <strong>deux fois de suite</strong> : la clé obtenue doit être identique.</p>
-      <button id="btn-test" type="button">Tester Face ID</button>
+    <section id="view-history" class="view" data-title="Historique" hidden>
+      <p class="placeholder">L'historique arrive à l'étape 5.</p>
     </section>
-
-    <section>
-      <h2>Résultat</h2>
-      <ul id="log" aria-live="polite"></ul>
-      <button id="btn-clear" type="button" class="secondary">Effacer l'affichage</button>
+    <section id="view-recap" class="view" data-title="Récapitulatif" hidden>
+      <p class="placeholder">Le récapitulatif mensuel arrive à l'étape 6.</p>
+    </section>
+    <section id="view-recurring" class="view" data-title="Récurrentes" hidden>
+      <p class="placeholder">Les dépenses récurrentes arrivent à l'étape 7.</p>
     </section>
   </main>
+
+  <nav class="tabbar" aria-label="Navigation">
+    <button type="button" class="tab" data-view="view-today" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+      <span>Aujourd'hui</span>
+    </button>
+    <button type="button" class="tab" data-view="view-history">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>
+      <span>Historique</span>
+    </button>
+    <button type="button" class="tab" data-view="view-recap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>
+      <span>Récap</span>
+    </button>
+    <button type="button" class="tab" data-view="view-recurring">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>
+      <span>Récurrentes</span>
+    </button>
+  </nav>
+
+  <section id="settings" class="sheet" aria-labelledby="settings-title" hidden>
+    <header class="sheet-header">
+      <h2 id="settings-title">Réglages</h2>
+      <button id="btn-settings-close" type="button" class="button-link">OK</button>
+    </header>
+    <ul class="list">
+      <li class="list-item muted">Export, import, CSV et effacement arrivent à l'étape 8.</li>
+      <li class="list-item"><span>Version</span><span id="app-version" class="muted"></span></li>
+    </ul>
+  </section>
 </body>
 </html>

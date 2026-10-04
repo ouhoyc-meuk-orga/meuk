@@ -248,3 +248,6 @@ README.md               installation, GitHub Pages, suppression de la passkey
     et la version s'est installée seule après fermeture complète (comportement iOS → choix A).
   - Version 0.1.2 : correctifs du choix A + `js/db.js` (base IndexedDB, magasin `meta`). À valider sur
     l'iPhone, puis une version 0.1.3 servira à tester le message « Meuk a été mis à jour ».
+  - Leçon : une correction du mécanisme de mise à jour ne peut se tester qu'à la version SUIVANTE (pendant
+    l'attente, c'est l'ancien code qui tourne). Le test de la 0.1.2 a donc échoué normalement ; la 0.1.3
+    (seul le numéro change) sert à tester « Plus tard » + retour, et le message après fermeture complète.

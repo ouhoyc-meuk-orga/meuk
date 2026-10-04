@@ -97,3 +97,46 @@ export function formatLongDate(date) {
 export function formatShortDay(day) {
   return day.slice(8, 10) + '/' + day.slice(5, 7) + '/' + day.slice(0, 4);
 }
+
+const dayHeader = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+const dayHeaderYear = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const monthName = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
+const dayShort = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+const dayShortYear = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+const dayMedium = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric' });
+
+// « 2026-10-04 » → « DIMANCHE 4 OCTOBRE » (l'année n'est ajoutée que si ce n'est pas l'année en cours)
+export function formatDayHeader(day) {
+  const fmt = day.slice(0, 4) === today().slice(0, 4) ? dayHeader : dayHeaderYear;
+  return fmt.format(dayToDate(day)).toUpperCase();
+}
+
+// « 2026-10-04 » → « dim. 4 oct. »
+export function formatShortDate(day) {
+  const fmt = day.slice(0, 4) === today().slice(0, 4) ? dayShort : dayShortYear;
+  return fmt.format(dayToDate(day));
+}
+
+// « 2026-10-04 » → « Dimanche 4 »
+export function formatDayOfMonth(day) {
+  return capitalize(dayMedium.format(dayToDate(day)));
+}
+
+// « 2026-10 » → « Octobre 2026 »
+export function formatMonth(month) {
+  return capitalize(monthName.format(dayToDate(month + '-01')));
+}
+
+// Ajoute n jours à « 2026-10-04 »
+export function addDays(day, n) {
+  const date = dayToDate(day);
+  date.setDate(date.getDate() + n);
+  return toLocalStamp(date).slice(0, 10);
+}
+
+// « 10:24 » ou « 10:24:37 » → « 10:24:37 » (secondes à :00 si absentes). null si invalide.
+export function normalizeTime(value) {
+  if (/^\d{2}:\d{2}$/.test(value)) return value + ':00';
+  if (/^\d{2}:\d{2}:\d{2}$/.test(value)) return value;
+  return null;
+}

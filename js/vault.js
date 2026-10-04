@@ -122,9 +122,9 @@ export function setupAbort() {
 
 // --- Déverrouillage ---
 
-export async function unlockWithPasskey() {
+export async function unlockWithPasskey(signal) {
   if (!vault) throw new VaultError('no-vault');
-  const secret = await getPrfSecret(vault.credentialId, vault.prfSalt);
+  const secret = await getPrfSecret(vault.credentialId, vault.prfSalt, signal);
   let keyBytes;
   try {
     const kek = await c.kekFromPrf(secret, vault.prfSalt);

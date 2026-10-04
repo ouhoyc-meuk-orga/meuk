@@ -101,9 +101,62 @@ function clearSecretsFromScreen() {
   $('recover-input').value = '';
 }
 
+// --- Déverrouillage ---
+
+let manualPending = false;
+let autoController = null;
+
+// auto = essai automatique à l'ouverture ; sinon, appui sur le bouton.
+async function unlock(auto) {
+  let signal;
+  if (auto) {
+    if (autoController) return;
+    autoController = new AbortController();
+    signal = autoController.signal;
+  } else {
+    if (manualPending) return;
+    manualPending = true;
+    // Un appui annule l'essai automatique éventuellement resté en suspens, puis relance Face ID.
+    if (autoController) autoController.abort();
+    autoController = null;
+    $('err-unlock').textContent = '';
+  }
+  try {
+    await vault.unlockWithPasskey(signal);
+    onUnlocked();
+  } catch (err) {
+    // Essai automatique refusé par iOS, annulé ou remplacé : pas de message, le bouton reste disponible.
+    if (!auto) {
+      if (err && err.code === 'cancelled') err.code = 'cancelled-unlock';
+      $('err-unlock').textContent = message(err);
+    }
+  } finally {
+    if (auto) {
+      if (autoController && autoController.signal === signal) autoController = null;
+    } else {
+      manualPending = false;
+    }
+  }
+}
+
+// Demande Face ID dès que l'écran verrouillé est visible, sans attendre d'appui (si iOS l'autorise).
+function autoUnlock() {
+  if (document.visibilityState !== 'visible') {
+    document.addEventListener('visibilitychange', function onVisible() {
+      if (document.visibilityState !== 'visible') return;
+      document.removeEventListener('visibilitychange', onVisible);
+      autoUnlock();
+    });
+    return;
+  }
+  if ($('auth').hidden || $('auth-lock').hidden || vault.isUnlocked()) return;
+  unlock(true);
+}
+
 export function showLock() {
   clearSecretsFromScreen();
   show('auth-lock');
+  autoUnlock();
 }
 
 export function init(callbacks) {
@@ -146,15 +199,7 @@ export function init(callbacks) {
   });
 
   // Déverrouillage
-  bind('btn-unlock', 'err-unlock', async () => {
-    try {
-      await vault.unlockWithPasskey();
-    } catch (err) {
-      if (err && err.code === 'cancelled') err.code = 'cancelled-unlock';
-      throw err;
-    }
-    onUnlocked();
-  });
+  $('btn-unlock').addEventListener('click', () => unlock(false));
 
   $('btn-show-recover').addEventListener('click', () => {
     show('auth-recover');

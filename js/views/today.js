@@ -5,7 +5,7 @@ import * as expenses from '../expenses.js';
 import {
   formatAmount, formatMonthShort, formatLongDate, parseAmount, toLocalStamp, dayToDate, today, addDays, timeOf, normalizeTime
 } from '../format.js';
-import { $, expenseRow, attachAmountFilter, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
+import { $, expenseRow, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
 let currentDay = today();
 let onChange = () => {};
@@ -76,9 +76,12 @@ async function onAdd(event) {
   }
   error.textContent = '';
   try {
-    const saved = await expenses.add({ amount, label, at });
+    // Par défaut : à régler (rouge). « Déjà réglé » activé : vert.
+    const saved = await expenses.add({ amount, label, at, card: $('add-debit').checked ? 'debit' : 'credit' });
     amountInput.value = '';
     labelInput.value = '';
+    fitAmount(amountInput);
+    $('add-debit').checked = false;
     if (document.activeElement) document.activeElement.blur();
     onChange(saved.id);
   } catch (err) {

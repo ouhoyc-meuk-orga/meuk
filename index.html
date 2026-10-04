@@ -130,6 +130,11 @@
           <span>Heure</span>
           <input id="add-time" type="time" step="1">
         </label>
+        <label class="switch-row">
+          <span>Déjà réglé</span>
+          <input id="add-debit" class="switch-input" type="checkbox">
+          <span class="switch" aria-hidden="true"></span>
+        </label>
         <p id="add-planned-note" class="planned-note" hidden>Date future : la dépense sera « prévue », hors des totaux, jusqu'à ce que tu la confirmes « Payée ».</p>
         <p id="add-error" class="form-error" role="alert"></p>
         <button type="submit" class="button-primary button-wide">Ajouter</button>
@@ -211,6 +216,11 @@
         <label class="field"><span>Date</span><input id="edit-date" type="date"></label>
         <label class="field"><span>Heure</span><input id="edit-time" type="time" step="1"></label>
       </div>
+      <label class="switch-row">
+        <span>Déjà réglé</span>
+        <input id="edit-debit" class="switch-input" type="checkbox">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
       <p id="edit-error" class="form-error" role="alert"></p>
       <button type="submit" class="button-primary button-wide">Enregistrer</button>
     </form>

@@ -165,7 +165,7 @@ function csvCell(text) {
 }
 
 export function buildCsv() {
-  const rows = [['Date', 'Heure', 'Libellé', 'Montant (€)', 'Statut']];
+  const rows = [['Date', 'Heure', 'Libellé', 'Montant (€)', 'Statut', 'Déjà réglé']];
   const list = store.all().sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
   for (const e of list) {
     const day = dayOf(e.at);
@@ -174,7 +174,8 @@ export function buildCsv() {
       timeOf(e.at),
       e.label,
       centsToInput(e.amount),
-      e.planned ? 'Prévue' : 'Payée'
+      e.planned ? 'Prévue' : 'Payée',
+      store.isDebit(e) ? 'Oui' : 'Non'
     ]);
   }
   const text = '﻿' + rows.map((r) => r.map(csvCell).join(';')).join('\r\n') + '\r\n';

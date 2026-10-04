@@ -18,11 +18,18 @@ export function errorText(prefix, err) {
   return prefix + (err && err.message ? err.message : String(err));
 }
 
+// Le champ montant prend la largeur de ce qui est tapé, pour rester centré à côté du « € ».
+export function fitAmount(input) {
+  input.size = input.value ? Math.max(2, input.value.length) : 4;
+}
+
 export function attachAmountFilter(input) {
   input.addEventListener('input', () => {
     const cleaned = cleanAmountInput(input.value);
     if (cleaned !== input.value) input.value = cleaned;
+    fitAmount(input);
   });
+  fitAmount(input);
 }
 
 function span(className, text) {
@@ -36,11 +43,12 @@ function span(className, text) {
 // mode « day »      : libellé, heure dessous, montant
 // mode « history »  : « 10:24:37 — Essence », montant
 // mode « upcoming » : « lun. 5 oct. — Loyer », montant
-// Couleurs : dépenses issues d'une récurrente en vert, les autres en rouge ; les prévues sont atténuées.
+// Couleurs : « déjà réglé » (dont les récurrentes par défaut) en vert, à régler en rouge ;
+// les prévues sont atténuées.
 // swipe : glisser vers la gauche fait apparaître une poubelle rouge ; un appui dessus supprime.
 export function expenseRow(expense, mode, { isNew = false, swipe = false } = {}) {
   const li = document.createElement('li');
-  li.className = 'expense-item ' + (expense.recurringId ? 'kind-recurring' : 'kind-normal') +
+  li.className = 'expense-item ' + (expenses.isDebit(expense) ? 'kind-recurring' : 'kind-normal') +
     (expense.planned ? ' is-planned' : '');
 
   const inner = document.createElement('div');
@@ -230,9 +238,11 @@ export function openEdit(id) {
   if (!expense) return;
   editingId = id;
   $('edit-amount').value = centsToInput(expense.amount);
+  fitAmount($('edit-amount'));
   $('edit-label').value = expense.label;
   $('edit-date').value = dayOf(expense.at);
   $('edit-time').value = timeOf(expense.at);
+  $('edit-debit').checked = expenses.isDebit(expense);
   $('edit-error').textContent = '';
   $('edit-planned-note').hidden = !expense.planned;
   $('btn-edit-paid').hidden = !expense.planned;
@@ -263,7 +273,9 @@ async function onSave(event) {
   const time = normalizeTime(raw);
   if (!time) { error.textContent = 'Indique une heure.'; return; }
   try {
-    await expenses.update(editingId, { amount, label, at: day + 'T' + time });
+    await expenses.update(editingId, {
+      amount, label, at: day + 'T' + time, card: $('edit-debit').checked ? 'debit' : 'credit'
+    });
     closeEdit();
     onChange();
   } catch (err) {

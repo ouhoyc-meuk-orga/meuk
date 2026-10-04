@@ -2,7 +2,7 @@
 
 import * as recurring from '../recurring.js';
 import { formatAmount, parseAmount, centsToInput } from '../format.js';
-import { $, attachAmountFilter, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
+import { $, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
 let editingId = null;
 let onChange = () => {};
@@ -42,6 +42,7 @@ function openSheet(id) {
   const rec = id ? recurring.list().find((r) => r.id === id) : null;
   $('rec-title').textContent = rec ? 'Modifier la récurrente' : 'Nouvelle récurrente';
   $('rec-amount').value = rec ? centsToInput(rec.amount) : '';
+  fitAmount($('rec-amount'));
   $('rec-label').value = rec ? rec.label : '';
   $('rec-day').value = rec ? String(rec.day) : '';
   $('rec-error').textContent = '';

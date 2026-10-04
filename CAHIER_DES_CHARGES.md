@@ -351,4 +351,22 @@ README.md               installation, GitHub Pages, suppression de la passkey
   - Historique : les dépenses **déjà payées apparaissent même si leur date est future** (en tête, jours
     futurs d'abord) ; « À venir ce mois-ci » se place juste au-dessus d'aujourd'hui. Les prévues futures
     non payées n'y figurent toujours pas (seulement dans le cumul « À venir ce mois-ci »).
+- **Version 1.3.0** — signification des couleurs précisée par l'utilisateur : **rouge = carte de crédit**
+  (solde à régler en fin de période, mode de paiement principal, choix par défaut), **vert = carte de
+  débit** (déjà réglé).
+  - Nouveau champ chiffré `card: 'credit' | 'debit'` sur la dépense. Fiches sans ce champ : débit si elle
+    vient d'une récurrente, crédit sinon (comportement inchangé pour l'existant).
+  - Saisie : case **« Déjà réglé (carte de débit) »**, décochée par défaut, décochée de nouveau après
+    chaque ajout. Même case dans la modification (pour corriger après coup).
+  - Dépenses des récurrentes : débit (vert) par défaut ; modifiables une par une.
+  - CSV : colonne « Carte » (Crédit / Débit).
+- **Version 1.4.0** :
+  - L'utilisateur ne veut **aucune mention de carte** dans l'app : l'option s'appelle simplement
+    **« Déjà réglé »** (facultative, désactivée par défaut), présentée en **interrupteur iOS**. Vert = déjà
+    réglé, rouge = à régler. CSV : colonne « Déjà réglé » (Oui / Non). (Le champ interne reste `card`.)
+  - **Refonte du design**, plus premium et épuré : interface monochrome (boutons pleins noirs en clair,
+    blancs en sombre), vert / rouge réservés aux montants ; chiffres en SF Pro Rounded (`ui-rounded`,
+    police système, rien de téléchargé) ; cartes arrondies (20 px) avec ombres légères en mode clair ;
+    totaux du mois et du jour réunis dans une carte ; montant de saisie centré, en grand ; boutons ronds
+    pour la navigation ; badges en pastille ; barre d'onglets floutée ; écrans de sécurité aérés.
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

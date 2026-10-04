@@ -8,8 +8,8 @@
 //     label  : texte libre, obligatoire
 //     at     : date et heure locales « 2026-10-04T10:24:37 »
 //     planned: true pour une dépense « prévue » (hors de tous les totaux) jusqu'à confirmation « Payée »
-//     card   : 'credit' (carte de crédit, reste à régler : rouge) ou 'debit' (carte de débit, déjà réglé : vert).
-//              Absent (anciennes fiches) : débit pour une dépense de récurrente, crédit sinon.
+//     card   : 'debit' = « déjà réglé » (vert) ; 'credit' = à régler (rouge, par défaut).
+//              Absent (anciennes fiches) : « déjà réglé » pour une dépense de récurrente, à régler sinon.
 // Les données déchiffrées ne vivent qu'en mémoire, tant que l'app est déverrouillée.
 
 import * as db from './db.js';
@@ -191,7 +191,7 @@ export function getRecurring(id) {
   return recurrings.get(id);
 }
 
-// Carte de débit (déjà réglé, vert) ? Sinon carte de crédit (reste à régler, rouge).
+// « Déjà réglé » (vert) ? Sinon à régler (rouge).
 export function isDebit(e) {
   return e.card ? e.card === 'debit' : Boolean(e.recurringId);
 }

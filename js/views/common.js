@@ -18,11 +18,18 @@ export function errorText(prefix, err) {
   return prefix + (err && err.message ? err.message : String(err));
 }
 
+// Le champ montant prend la largeur de ce qui est tapé, pour rester centré à côté du « € ».
+export function fitAmount(input) {
+  input.size = input.value ? Math.max(2, input.value.length) : 4;
+}
+
 export function attachAmountFilter(input) {
   input.addEventListener('input', () => {
     const cleaned = cleanAmountInput(input.value);
     if (cleaned !== input.value) input.value = cleaned;
+    fitAmount(input);
   });
+  fitAmount(input);
 }
 
 function span(className, text) {
@@ -36,8 +43,8 @@ function span(className, text) {
 // mode « day »      : libellé, heure dessous, montant
 // mode « history »  : « 10:24:37 — Essence », montant
 // mode « upcoming » : « lun. 5 oct. — Loyer », montant
-// Couleurs : carte de débit (déjà réglé, dont les récurrentes par défaut) en vert, carte de crédit
-// (reste à régler) en rouge ; les prévues sont atténuées.
+// Couleurs : « déjà réglé » (dont les récurrentes par défaut) en vert, à régler en rouge ;
+// les prévues sont atténuées.
 // swipe : glisser vers la gauche fait apparaître une poubelle rouge ; un appui dessus supprime.
 export function expenseRow(expense, mode, { isNew = false, swipe = false } = {}) {
   const li = document.createElement('li');
@@ -231,6 +238,7 @@ export function openEdit(id) {
   if (!expense) return;
   editingId = id;
   $('edit-amount').value = centsToInput(expense.amount);
+  fitAmount($('edit-amount'));
   $('edit-label').value = expense.label;
   $('edit-date').value = dayOf(expense.at);
   $('edit-time').value = timeOf(expense.at);

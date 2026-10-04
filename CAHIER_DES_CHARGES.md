@@ -360,6 +360,13 @@ README.md               installation, GitHub Pages, suppression de la passkey
     chaque ajout. Même case dans la modification (pour corriger après coup).
   - Dépenses des récurrentes : débit (vert) par défaut ; modifiables une par une.
   - CSV : colonne « Carte » (Crédit / Débit).
-  - Interprétation : le message disait « déjà réglé avec ma carte de crédit » ; compris comme « de débit »
-    (cohérent avec le reste du message) — à confirmer par l'utilisateur.
+- **Version 1.4.0** :
+  - L'utilisateur ne veut **aucune mention de carte** dans l'app : l'option s'appelle simplement
+    **« Déjà réglé »** (facultative, désactivée par défaut), présentée en **interrupteur iOS**. Vert = déjà
+    réglé, rouge = à régler. CSV : colonne « Déjà réglé » (Oui / Non). (Le champ interne reste `card`.)
+  - **Refonte du design**, plus premium et épuré : interface monochrome (boutons pleins noirs en clair,
+    blancs en sombre), vert / rouge réservés aux montants ; chiffres en SF Pro Rounded (`ui-rounded`,
+    police système, rien de téléchargé) ; cartes arrondies (20 px) avec ombres légères en mode clair ;
+    totaux du mois et du jour réunis dans une carte ; montant de saisie centré, en grand ; boutons ronds
+    pour la navigation ; badges en pastille ; barre d'onglets floutée ; écrans de sécurité aérés.
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

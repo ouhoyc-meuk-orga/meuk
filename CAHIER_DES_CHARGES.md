@@ -300,3 +300,38 @@ README.md               installation, GitHub Pages, suppression de la passkey
     hors écran d'accueil.
   - Réglages affiche l'état du stockage persistant (« protégé » / « non protégé »).
   - Fichiers ajoutés hors arborescence prévue : `js/vault.js` (logique du coffre), `js/views/security.js`.
+- **Étape 3 validée sur l'iPhone.** À la demande de l'utilisateur (« trop lent »), **étapes 4 à 9 livrées
+  ensemble** (version 1.0.0) pour une vérification globale.
+- Décisions reportées, prises par défaut (modifiables si l'utilisateur le demande) :
+  - « Payée » : la dépense garde sa date et son heure prévues.
+  - Récurrente : dépense prévue à 00:00:00 le jour choisi (heure non affichée : « Récurrente ») ; le mois
+    de création compte si ce jour n'est pas encore passé, sinon début le mois suivant.
+  - « À venir » : en haut de l'Historique. Rappel « N dépenses prévues à confirmer » = prévues dont la date
+    est arrivée ; un appui ouvre leur liste avec « Payée ».
+  - Modifier la date d'une dépense vers le futur la rend « prévue » ; une prévue peut être confirmée même
+    avant sa date (payée en avance).
+- Étape 4 : ‹ › entre les jours, appui sur la date = calendrier iOS (champ date transparent), « Revenir à
+  aujourd'hui », champ heure (pré-rempli, modifiable) pour un autre jour, prévues grisées + badge.
+- Étape 5 : Historique groupé par jour (« DIMANCHE 4 OCTOBRE », année ajoutée si ≠ année en cours), lignes
+  « 10:24:37 — Essence — 50,00 € », total réel par jour (pas de total pour un jour sans dépense réelle).
+- Étape 6 : Récap mensuel (total réel, nombre, jours avec total ; prévues grisées) ; appui sur un jour →
+  ce jour dans Aujourd'hui.
+- Étape 7 : `js/recurring.js` : fiche chiffrée `{ type: 'recurring', v: 1, amount, label, day, start, last }` ;
+  génération au déverrouillage du premier mois non généré au mois en cours ; anti-doublon par
+  `recurringId` + `month` sur la dépense ; jour 31 → dernier jour du mois.
+- Étape 8 : `js/backup.js`, `js/views/settings.js` :
+  - Sauvegarde `.meuk` (JSON) : sel + itérations + clé de données chiffrée par la phrase + témoin + fiches
+    chiffrées (id en clair). Aucune donnée en clair. Même coffre → import direct ; autre coffre → phrase
+    de la sauvegarde demandée.
+  - Import : tout est déchiffré et vérifié avant d'écrire ; fusion (ajoute les absentes) ou remplacement
+    (écrit d'abord, supprime ensuite), avec confirmation.
+  - CSV : avertissement « non chiffré » ; `;`, virgule décimale, BOM (Excel FR) ; protection contre
+    l'injection de formules.
+  - Partage : fichier préparé, puis bouton « Partager / Enregistrer… » (feuille de partage iOS, appel
+    direct dans l'appui) ou « Télécharger ».
+  - Effacement : double confirmation ; base supprimée, cache vidé, service worker désinscrit ; écran
+    expliquant la suppression de la passkey dans Mots de passe.
+- Étape 9 : relecture de sécurité (aucune requête réseau hors service worker, aucun stockage hors
+  IndexedDB, aucun innerHTML/eval, aucun style ou script en ligne, aucune ressource externe) ; textes
+  affichés uniquement via `textContent`.
+- **Reste à faire : vérification globale sur l'iPhone par l'utilisateur.**

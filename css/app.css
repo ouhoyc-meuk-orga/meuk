@@ -423,3 +423,185 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
   color: #ff453a;
   font-weight: 600;
 }
+
+/* Navigation entre les jours / les mois */
+.day-nav,
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 0 -10px 8px;
+}
+
+.day-nav .icon-button,
+.month-nav .icon-button { margin: 0; }
+.month-nav .icon-button:disabled { opacity: 0.3; }
+
+.day-picker {
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+
+.day-picker .date-heading { margin: 0; display: block; }
+
+/* Champ date transparent posé sur la date : le toucher ouvre le calendrier d'iOS. */
+.day-picker input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.month-nav .date-heading { margin: 0; flex: 1; text-align: center; }
+
+.back-today { display: block; margin: -4px auto 8px; min-height: 32px; }
+
+.reminder {
+  display: block;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 15px;
+  text-align: left;
+}
+
+.reminder::before { content: "● "; color: #ff9f0a; }
+
+.inline-field { flex-direction: row; align-items: center; justify-content: space-between; margin: 0; }
+.inline-field input,
+.inline-field select { width: auto; min-width: 140px; min-height: 44px; }
+
+select {
+  font: inherit;
+  font-size: 17px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--separator);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.planned-note,
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+.entry-form .planned-note,
+.entry-form .hint { margin: 0; }
+
+/* Dépenses prévues : grisées, distinctes des dépenses réelles */
+.expense-item { display: flex; align-items: center; border-bottom: 0.5px solid var(--separator); }
+.expense-item:last-child { border-bottom: 0; }
+.expense-item .expense-row { flex: 1; border-bottom: 0; }
+.expense-list > li:not(.expense-item) .expense-row { border-bottom: 0.5px solid var(--separator); }
+.expense-list > li:not(.expense-item):last-child .expense-row { border-bottom: 0; }
+
+.is-planned .expense-label,
+.is-planned .expense-amount,
+.is-planned .expense-time-inline { color: var(--muted); }
+.is-planned .expense-amount { font-weight: 400; }
+
+.badge {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  border: 1px dashed var(--muted);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.paid-button {
+  flex-shrink: 0;
+  margin-right: 12px;
+  padding: 6px 12px;
+  min-height: 34px;
+  border-radius: 17px;
+  background: var(--bg);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.expense-line { overflow-wrap: anywhere; }
+.expense-time-inline { color: var(--muted); font-variant-numeric: tabular-nums; }
+.expense-line .expense-label { font-weight: 500; }
+
+/* Historique */
+.day-group { margin-bottom: 20px; }
+
+.day-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 4px 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.day-group-total { color: var(--fg); font-size: 15px; font-variant-numeric: tabular-nums; }
+
+/* Récapitulatif */
+.recap-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 20px;
+  padding: 20px 16px;
+}
+
+.recap-total { font-size: 40px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.recap-caption { color: var(--muted); font-size: 15px; }
+
+.section-title {
+  margin: 24px 4px 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+#view-recurring .button-primary { margin-top: 16px; }
+
+/* Réglages */
+.list-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 16px;
+  text-align: left;
+  color: var(--accent);
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.list li:last-child .list-button { border-bottom: 0; }
+.list-button.danger { color: #ff453a; }
+.settings-footer { margin-top: 24px; }
+#settings .section-title:first-of-type { margin-top: 8px; }
+
+.notice-inline { margin: 0 0 12px; color: var(--accent); font-weight: 500; }
+.notice-inline:empty { display: none; }
+
+.file-name {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.sheet-action { margin-top: 12px; }
+.sheet .button-primary.button-wide + .form-error { margin-top: 12px; }
+#import-step-phrase textarea { margin-bottom: 0; }

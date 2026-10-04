@@ -72,3 +72,17 @@ export function putRecord(record) {
 export function deleteRecord(id) {
   return run('records', 'readwrite', (store) => store.delete(id));
 }
+
+// Supprime toute la base (« Effacer toutes mes données »).
+export async function destroy() {
+  if (dbPromise) {
+    try { (await dbPromise).close(); } catch (err) { /* déjà fermée */ }
+    dbPromise = null;
+  }
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+    request.onblocked = () => resolve();
+  });
+}

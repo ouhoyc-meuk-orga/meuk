@@ -107,8 +107,18 @@
 
   <main>
     <p id="app-notice" class="notice" role="status" hidden></p>
+
     <section id="view-today" class="view" data-title="Aujourd'hui">
-      <p id="today-date" class="date-heading"></p>
+      <div class="day-nav">
+        <button id="day-prev" type="button" class="icon-button" aria-label="Jour précédent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <label class="day-picker">
+          <span id="today-date" class="date-heading"></span>
+          <input id="day-input" type="date" aria-label="Choisir un jour">
+        </label>
+        <button id="day-next" type="button" class="icon-button" aria-label="Jour suivant"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <button id="btn-back-today" type="button" class="button-link back-today" hidden>Revenir à aujourd'hui</button>
+      <button id="due-reminder" type="button" class="reminder" hidden></button>
 
       <form id="add-form" class="card entry-form" novalidate autocomplete="off">
         <label class="amount-field">
@@ -116,6 +126,11 @@
           <span class="currency" aria-hidden="true">€</span>
         </label>
         <input id="add-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+        <label id="add-time-field" class="field inline-field" hidden>
+          <span>Heure</span>
+          <input id="add-time" type="time" step="1">
+        </label>
+        <p id="add-planned-note" class="planned-note" hidden>Date future : la dépense sera « prévue », hors des totaux, jusqu'à ce que tu la confirmes « Payée ».</p>
         <p id="add-error" class="form-error" role="alert"></p>
         <button type="submit" class="button-primary button-wide">Ajouter</button>
       </form>
@@ -127,14 +142,33 @@
       <ul id="day-list" class="list expense-list"></ul>
       <p id="day-empty" class="empty">Aucune dépense ce jour.</p>
     </section>
+
     <section id="view-history" class="view" data-title="Historique" hidden>
-      <p class="placeholder">L'historique arrive à l'étape 5.</p>
+      <div id="history-content"></div>
+      <p id="history-empty" class="empty">Aucune dépense pour l'instant.</p>
     </section>
+
     <section id="view-recap" class="view" data-title="Récapitulatif" hidden>
-      <p class="placeholder">Le récapitulatif mensuel arrive à l'étape 6.</p>
+      <div class="month-nav">
+        <button id="recap-prev" type="button" class="icon-button" aria-label="Mois précédent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span id="recap-month" class="date-heading"></span>
+        <button id="recap-next" type="button" class="icon-button" aria-label="Mois suivant"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="card recap-card">
+        <span class="recap-caption">Total dépensé</span>
+        <span id="recap-total" class="recap-total"></span>
+        <span id="recap-count" class="recap-caption"></span>
+      </div>
+      <ul id="recap-days" class="list expense-list"></ul>
+      <h2 id="recap-planned-title" class="section-title" hidden>Prévues ce mois-ci</h2>
+      <ul id="recap-planned" class="list expense-list"></ul>
     </section>
+
     <section id="view-recurring" class="view" data-title="Récurrentes" hidden>
-      <p class="placeholder">Les dépenses récurrentes arrivent à l'étape 7.</p>
+      <p class="hint">Chaque mois, une récurrente crée une dépense « prévue », à confirmer « Payée » quand elle est réglée.</p>
+      <ul id="recurring-list" class="list expense-list"></ul>
+      <p id="recurring-empty" class="empty">Aucune dépense récurrente.</p>
+      <button id="btn-rec-add" type="button" class="button-primary button-wide">Ajouter une récurrente</button>
     </section>
   </main>
 
@@ -162,6 +196,7 @@
       <h2 id="edit-title" class="sheet-title-small">Modifier</h2>
       <button id="btn-edit-cancel" type="button" class="button-link">Annuler</button>
     </header>
+    <p id="edit-planned-note" class="planned-note" hidden>Dépense prévue : elle n'entre dans aucun total tant qu'elle n'est pas confirmée « Payée ».</p>
     <form id="edit-form" class="card entry-form" novalidate autocomplete="off">
       <label class="amount-field">
         <input id="edit-amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-label="Montant">
@@ -175,7 +210,41 @@
       <p id="edit-error" class="form-error" role="alert"></p>
       <button type="submit" class="button-primary button-wide">Enregistrer</button>
     </form>
+    <button id="btn-edit-paid" type="button" class="button-secondary button-wide sheet-action" hidden>Marquer comme payée</button>
     <button id="btn-edit-delete" type="button" class="button-danger button-wide">Supprimer la dépense</button>
+  </section>
+
+  <section id="due-sheet" class="sheet" aria-labelledby="due-title" hidden>
+    <header class="sheet-header">
+      <h2 id="due-title" class="sheet-title-small">À confirmer</h2>
+      <button id="btn-due-close" type="button" class="button-link">OK</button>
+    </header>
+    <p class="hint">Dépenses prévues dont la date est arrivée. Touche « Payée » quand elles sont réglées.</p>
+    <ul id="due-list" class="list expense-list"></ul>
+    <p id="due-empty" class="empty">Rien à confirmer.</p>
+  </section>
+
+  <section id="rec-sheet" class="sheet" aria-labelledby="rec-title" hidden>
+    <header class="sheet-header">
+      <h2 id="rec-title" class="sheet-title-small">Nouvelle récurrente</h2>
+      <button id="btn-rec-cancel" type="button" class="button-link">Annuler</button>
+    </header>
+    <form id="rec-form" class="card entry-form" novalidate autocomplete="off">
+      <label class="amount-field">
+        <input id="rec-amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-label="Montant">
+        <span class="currency" aria-hidden="true">€</span>
+      </label>
+      <input id="rec-label" class="label-field" type="text" placeholder="Libellé (loyer, abonnement…)" maxlength="100" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+      <label class="field inline-field">
+        <span>Jour du mois</span>
+        <select id="rec-day"><option value="">—</option></select>
+      </label>
+      <p class="hint">Si le jour n'existe pas dans un mois (ex. 31 en février), le dernier jour du mois est utilisé.</p>
+      <p id="rec-edit-note" class="hint" hidden>Une modification ne s'applique qu'aux mois à venir ; les dépenses déjà créées ne changent pas.</p>
+      <p id="rec-error" class="form-error" role="alert"></p>
+      <button type="submit" class="button-primary button-wide">Enregistrer</button>
+    </form>
+    <button id="btn-rec-delete" type="button" class="button-danger button-wide" hidden>Supprimer la récurrente</button>
   </section>
 
   <section id="settings" class="sheet" aria-labelledby="settings-title" hidden>
@@ -183,15 +252,75 @@
       <h2 id="settings-title">Réglages</h2>
       <button id="btn-settings-close" type="button" class="button-link">OK</button>
     </header>
+    <p id="settings-message" class="notice-inline" role="status"></p>
+
+    <h3 class="section-title">Sauvegarde</h3>
     <ul class="list">
-      <li class="list-item muted">Export, import, CSV et effacement arrivent à l'étape 8.</li>
+      <li><button id="btn-export" type="button" class="list-button">Exporter une sauvegarde chiffrée</button></li>
+      <li><button id="btn-import" type="button" class="list-button">Importer une sauvegarde</button></li>
+      <li><button id="btn-export-csv" type="button" class="list-button">Exporter en CSV (non chiffré)</button></li>
+    </ul>
+    <input id="import-file" type="file" accept=".meuk,application/json,.json" hidden>
+
+    <h3 class="section-title">Sécurité</h3>
+    <ul class="list">
       <li class="list-item"><span>Chiffrement</span><span class="muted">actif</span></li>
       <li class="list-item"><span>Stockage</span><span id="storage-status" class="muted"></span></li>
+      <li><button id="btn-lock-now" type="button" class="list-button">Verrouiller maintenant</button></li>
+    </ul>
+
+    <h3 class="section-title">Données</h3>
+    <ul class="list">
+      <li><button id="btn-erase" type="button" class="list-button danger">Effacer toutes mes données</button></li>
+    </ul>
+
+    <ul class="list settings-footer">
       <li class="list-item"><span>Version</span><span id="app-version" class="muted"></span></li>
     </ul>
-    <button id="btn-lock-now" type="button" class="button-secondary button-wide settings-action">Verrouiller maintenant</button>
+  </section>
+
+  <section id="file-sheet" class="sheet" aria-labelledby="file-title" hidden>
+    <header class="sheet-header">
+      <h2 id="file-title" class="sheet-title-small"></h2>
+      <button id="btn-file-close" type="button" class="button-link">Fermer</button>
+    </header>
+    <p id="file-text" class="hint"></p>
+    <p id="file-name" class="file-name"></p>
+    <button id="btn-file-share" type="button" class="button-primary button-wide">Partager / Enregistrer…</button>
+    <button id="btn-file-download" type="button" class="button-secondary button-wide sheet-action">Télécharger</button>
+    <p id="file-error" class="form-error" role="alert"></p>
+  </section>
+
+  <section id="import-sheet" class="sheet" aria-labelledby="import-title" hidden>
+    <header class="sheet-header">
+      <h2 id="import-title" class="sheet-title-small">Importer</h2>
+      <button id="btn-import-cancel" type="button" class="button-link">Annuler</button>
+    </header>
+    <p id="import-file-name" class="file-name"></p>
+    <div id="import-step-phrase" hidden>
+      <p class="hint">Cette sauvegarde vient d'un autre coffre : tape la phrase de secours de ce coffre (12 mots).</p>
+      <textarea id="import-phrase" rows="4" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
+      <button id="btn-import-decrypt" type="button" class="button-primary button-wide sheet-action">Déchiffrer</button>
+    </div>
+    <div id="import-step-choice" hidden>
+      <p id="import-summary" class="hint"></p>
+      <button id="btn-import-merge" type="button" class="button-primary button-wide sheet-action">Fusionner avec mes données</button>
+      <button id="btn-import-replace" type="button" class="button-secondary button-wide sheet-action">Remplacer mes données</button>
+    </div>
+    <p id="import-error" class="form-error" role="alert"></p>
   </section>
   </div>
+
+  <div id="erased" class="auth" hidden>
+    <section class="auth-screen">
+      <h1>Données effacées</h1>
+      <p>Toutes les données de Meuk ont été supprimées de ce téléphone.</p>
+      <p>Pour supprimer aussi la passkey : app <strong>Mots de passe</strong> → rechercher <strong>ouhoyc-meuk-orga.github.io</strong> → choisir la passkey « Meuk » → <strong>Supprimer</strong>.</p>
+      <p>Tu peux aussi retirer l'icône de l'écran d'accueil.</p>
+      <button id="btn-restart" type="button" class="button-primary button-wide">Recommencer</button>
+    </section>
+  </div>
+
   <div id="update-banner" class="banner" role="status" hidden>
     <p>Une nouvelle version de Meuk est disponible.</p>
     <div class="banner-actions">

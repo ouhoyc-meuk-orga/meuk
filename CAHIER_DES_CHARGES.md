@@ -384,4 +384,12 @@ README.md               installation, GitHub Pages, suppression de la passkey
   gris anthracite de l'icône** (`#1F1D22`), en mode clair comme sombre, barre d'état iOS assortie
   (`theme-color` modifié pendant ces écrans) ; **carnet affiché en grand** (`icons/logo-720.jpg`, recadrage
   serré de l'image d'origine, 52 Ko), fondu dans le fond sans carré visible.
+- **Version 1.6.0** :
+  - **Zoom désactivé** partout (écrans d'ouverture compris) : `maximum-scale=1, user-scalable=no` dans le
+    viewport, `touch-action: manipulation` (double-tap), et blocage du pincement (`gesturestart/change/end`
+    et `touchmove` à plusieurs doigts, `js/nozoom.js`). Limite : iOS ne garantit pas le blocage total ; le
+    Zoom d'accessibilité d'iOS reste toujours possible (voulu par Apple).
+  - Aujourd'hui : ligne **« Crédit »** entre le total du mois et le total du jour = total des dépenses
+    réelles (non prévues) du mois affiché **non « déjà réglées »** (en rouge), montant en rouge. Le mot
+    « Crédit » est demandé explicitement par l'utilisateur (seule mention de ce type dans l'app).
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

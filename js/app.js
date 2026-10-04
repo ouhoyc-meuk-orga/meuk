@@ -1,5 +1,6 @@
 // Démarrage de l'app Dépenses, navigation entre les onglets, et passage verrouillé / déverrouillé.
 
+import './nozoom.js';
 import { initUpdates } from './update.js';
 import * as vault from './vault.js';
 import * as expenses from './expenses.js';

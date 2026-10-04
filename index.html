@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; manifest-src 'self'; worker-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
@@ -144,6 +144,10 @@
       <div class="day-summary month-summary">
         <span id="month-total-label">Total du mois</span>
         <span id="month-total" class="month-total"></span>
+      </div>
+      <div class="day-summary credit-summary">
+        <span>Crédit</span>
+        <span id="credit-total" class="credit-total"></span>
       </div>
       <div class="day-summary">
         <span>Total du jour</span>

@@ -37,7 +37,10 @@ export function render(newId) {
   list.forEach((e) => ul.appendChild(expenseRow(e, 'day', { isNew: e.id === newId })));
   $('day-total').textContent = formatAmount(expenses.total(list));
   // Total (réel) du mois du jour affiché.
-  $('month-total').textContent = formatAmount(expenses.total(expenses.forMonth(currentDay.slice(0, 7))));
+  const monthList = expenses.forMonth(currentDay.slice(0, 7));
+  $('month-total').textContent = formatAmount(expenses.total(monthList));
+  // Crédit : dépenses réelles du mois NON « déjà réglées » (en rouge) = ce qui reste à régler.
+  $('credit-total').textContent = formatAmount(expenses.total(monthList.filter((e) => !expenses.isDebit(e))));
   $('month-total-label').textContent = 'Total ' + formatMonthShort(currentDay.slice(0, 7));
   $('day-empty').hidden = list.length > 0;
 

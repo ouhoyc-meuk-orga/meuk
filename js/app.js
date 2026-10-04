@@ -37,13 +37,33 @@ function showApp(notice) {
   app.hidden = false;
 }
 
+// Verrouillage : la clé est oubliée et le contenu masqué tout de suite, puis l'app est rechargée
+// entièrement, ce qui efface TOUTE sa mémoire. Le rechargement permet aussi à iOS de proposer Face ID
+// automatiquement (il ne l'accepte qu'à l'ouverture d'une page).
+// - passage en arrière-plan : rechargement au retour, avec Face ID automatique ;
+// - inactivité ou « Verrouiller maintenant » : rechargement immédiat, SANS Face ID automatique
+//   (marqueur « #verrouille » dans l'adresse, retiré aussitôt au démarrage ; rien n'est stocké).
+let reloadWhenVisible = false;
+
 function onLocked() {
   vault.lock();
-  // Les données affichées disparaissent de l'écran (et de la mémoire avec la clé).
   app.hidden = true;
   settings.hidden = true;
-  security.showLock();
+  security.showLock({ auto: false });
+  if (document.visibilityState === 'hidden') {
+    reloadWhenVisible = true;
+  } else {
+    window.location.hash = 'verrouille';
+    window.location.reload();
+  }
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && reloadWhenVisible) {
+    reloadWhenVisible = false;
+    window.location.reload();
+  }
+});
 
 function onUnlocked(options = {}) {
   startAutoLock(onLocked);
@@ -76,7 +96,9 @@ async function start() {
     $('fatal-text').textContent = 'Impossible d\'ouvrir la base de Meuk : ' + (err && err.message ? err.message : err);
     return;
   }
-  security.start(state);
+  const lockedByUser = window.location.hash === '#verrouille';
+  if (window.location.hash) history.replaceState(null, '', window.location.pathname);
+  security.start(state, { auto: !lockedByUser });
 }
 
 start();

@@ -253,7 +253,13 @@ README.md               installation, GitHub Pages, suppression de la passkey
     (seul le numéro change) sert à tester « Plus tard » + retour, et le message après fermeture complète.
 - **Étape 1 terminée** (mises à jour testées sur l'iPhone jusqu'à la 0.1.3 : message réaffiché après
   « Plus tard », message « Meuk a été mis à jour » après fermeture complète).
-- **Étape 2 en cours** (version 0.2.0) — choix techniques :
+- **Étape 2 validée sur l'iPhone** (version 0.2.0) : création, phrase vérifiée, verrouillage (arrière-plan,
+  fermeture, 5 min), Face ID, récupération par la phrase + nouvelle passkey : tout fonctionne.
+- Version 0.2.1 (demande de l'utilisateur) : **Face ID automatique** à l'ouverture et au retour dans l'app,
+  sans appui. iOS peut refuser une demande Face ID sans appui : dans ce cas, aucun message, le bouton
+  « Déverrouiller avec Face ID » reste disponible (un appui annule un essai automatique resté en suspens).
+  Aucun changement de sécurité (Face ID toujours exigé). Résultat sur l'iPhone : à confirmer.
+- Choix techniques de l'étape 2 :
   - Face ID n'est déclenché que par un appui de bouton (exigence iOS) : la création demande donc deux
     appuis + Face ID (créer la passkey, puis activer le chiffrement), le déverrouillage un appui.
   - Identifiant utilisateur WebAuthn **fixe** (`meuk-user-v1`) : recréer une passkey (phrase de secours,

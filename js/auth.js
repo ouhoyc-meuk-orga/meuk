@@ -67,10 +67,12 @@ export async function createPasskey() {
 }
 
 // Demande Face ID et renvoie le secret PRF (32 octets) propre à cette passkey et à ce sel.
-export async function getPrfSecret(credentialId, prfSalt) {
+// « signal » permet d'annuler une demande en cours (essai automatique remplacé par un appui).
+export async function getPrfSecret(credentialId, prfSalt, signal) {
   let assertion;
   try {
     assertion = await navigator.credentials.get({
+      signal,
       publicKey: {
         challenge: crypto.getRandomValues(new Uint8Array(32)),
         allowCredentials: [{ type: 'public-key', id: credentialId }],

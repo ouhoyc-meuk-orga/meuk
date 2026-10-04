@@ -258,7 +258,15 @@ README.md               installation, GitHub Pages, suppression de la passkey
 - Version 0.2.1 (demande de l'utilisateur) : **Face ID automatique** à l'ouverture et au retour dans l'app,
   sans appui. iOS peut refuser une demande Face ID sans appui : dans ce cas, aucun message, le bouton
   « Déverrouiller avec Face ID » reste disponible (un appui annule un essai automatique resté en suspens).
-  Aucun changement de sécurité (Face ID toujours exigé). Résultat sur l'iPhone : à confirmer.
+  Aucun changement de sécurité (Face ID toujours exigé).
+  Résultat sur l'iPhone : à l'ouverture, iOS affiche sa propre fenêtre « Se connecter… Utiliser la clé
+  d'accès » (confirmation imposée par iOS pour toute demande sans appui : impossible à supprimer) ;
+  au retour d'une autre app, rien (iOS refuse sans message sur une page déjà ouverte).
+- Version 0.2.2 : **verrouiller = recharger la page** (efface toute la mémoire de l'app). Arrière-plan →
+  contenu masqué et clé oubliée tout de suite, rechargement au retour → Face ID automatique comme à
+  l'ouverture. Inactivité / « Verrouiller maintenant » → rechargement immédiat SANS Face ID automatique
+  (marqueur `#verrouille` dans l'adresse, retiré au démarrage). Une saisie non validée est perdue au
+  verrouillage. Résultat au retour d'une autre app sur l'iPhone : à confirmer.
 - Choix techniques de l'étape 2 :
   - Face ID n'est déclenché que par un appui de bouton (exigence iOS) : la création demande donc deux
     appuis + Face ID (créer la passkey, puis activer le chiffrement), le déverrouillage un appui.

@@ -153,10 +153,10 @@ function autoUnlock() {
   unlock(true);
 }
 
-export function showLock() {
+export function showLock({ auto = true } = {}) {
   clearSecretsFromScreen();
   show('auth-lock');
-  autoUnlock();
+  if (auto) autoUnlock();
 }
 
 export function init(callbacks) {
@@ -238,13 +238,13 @@ export function init(callbacks) {
   });
 }
 
-export function start(state) {
+export function start(state, { auto = true } = {}) {
   if (state === 'setup') {
     const warn = !isStandalone();
     $('auth-not-standalone').hidden = !warn;
     $('btn-setup-start').hidden = warn;
     show('auth-welcome');
   } else {
-    showLock();
+    showLock({ auto });
   }
 }

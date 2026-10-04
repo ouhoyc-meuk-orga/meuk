@@ -218,6 +218,14 @@ README.md               installation, GitHub Pages, suppression de la passkey
 - Phrase de secours : **une seule vérification** à la création (retaper quelques mots tirés au hasard).
 - Historique : s'arrête à **aujourd'hui**. Les dépenses prévues futures apparaissent dans une partie
   **« À venir »**, affichée seulement s'il y en a (emplacement exact à décider à l'étape 5).
+- **Mises à jour — choix A** (validé après test sur l'iPhone) : iOS installe automatiquement une version en
+  attente quand l'app est complètement fermée puis rouverte ; un site ne peut pas l'empêcher simplement.
+  Donc : app ouverte → bannière « Mettre à jour / Plus tard », réaffichée à chaque retour dans l'app ;
+  après une installation (demandée ou faite par iOS) → message « Meuk a été mis à jour (version X) ».
+  Le choix B (bloquer toute mise à jour sans accord) a été écarté : complexe, fragile, et incomplet (`sw.js`
+  se met de toute façon à jour seul) ; la vraie protection est la demande de fusion validée par l'utilisateur.
+- Stockage technique en clair (signalé et accepté) : magasin `meta` de la base IndexedDB `meuk`, contenant
+  uniquement `lastVersion` (numéro de la dernière version vue).
 - **Reportés** (à trancher plus tard avec l'utilisateur) :
   - à la confirmation « Payée », la prévue garde-t-elle sa date ou prend-elle l'heure de confirmation ? (étape 4)
   - récurrentes : heure des dépenses générées, prise en compte ou non du mois en cours à la création. (étape 7)
@@ -236,4 +244,7 @@ README.md               installation, GitHub Pages, suppression de la passkey
   `js/format.js`, `js/update.js`, `js/version.js`, `icons/` (dont `icon.svg`, source des PNG).
   La version est dupliquée dans `js/version.js` et `sw.js` (doivent rester identiques).
   - `main` protégée par un ruleset (pas de suppression, pas de force push, demande de fusion obligatoire).
-  - Version 0.1.1 publiée uniquement pour tester la bannière de mise à jour sur l'iPhone.
+  - Version 0.1.1 publiée pour tester la bannière : le message ne revenait pas après « Plus tard » (corrigé),
+    et la version s'est installée seule après fermeture complète (comportement iOS → choix A).
+  - Version 0.1.2 : correctifs du choix A + `js/db.js` (base IndexedDB, magasin `meta`). À valider sur
+    l'iPhone, puis une version 0.1.3 servira à tester le message « Meuk a été mis à jour ».

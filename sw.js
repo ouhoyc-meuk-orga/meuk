@@ -5,7 +5,7 @@
 'use strict';
 
 // Doit être identique à js/version.js.
-const VERSION = '0.1.1';
+const VERSION = '0.1.2';
 const CACHE = 'meuk-' + VERSION;
 
 const FILES = [
@@ -14,6 +14,7 @@ const FILES = [
   'manifest.webmanifest',
   'css/app.css',
   'js/app.js',
+  'js/db.js',
   'js/format.js',
   'js/update.js',
   'js/version.js',

@@ -672,3 +672,22 @@ select {
 
 /* Récurrente d'un mois à venir (pas encore enregistrée) : ligne non modifiable */
 .expense-row:disabled { opacity: 1; color: inherit; cursor: default; }
+
+/* Case « Déjà réglé (carte de débit) » */
+.check-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--fg);
+  cursor: pointer;
+}
+.check-field input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.check-field input:checked + span { color: var(--accent); font-weight: 600; }

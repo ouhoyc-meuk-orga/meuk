@@ -76,9 +76,11 @@ async function onAdd(event) {
   }
   error.textContent = '';
   try {
-    const saved = await expenses.add({ amount, label, at });
+    // Par défaut : carte de crédit (rouge, reste à régler). Case cochée : carte de débit (vert, déjà réglé).
+    const saved = await expenses.add({ amount, label, at, card: $('add-debit').checked ? 'debit' : 'credit' });
     amountInput.value = '';
     labelInput.value = '';
+    $('add-debit').checked = false;
     if (document.activeElement) document.activeElement.blur();
     onChange(saved.id);
   } catch (err) {

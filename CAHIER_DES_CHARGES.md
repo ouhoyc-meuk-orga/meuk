@@ -351,4 +351,15 @@ README.md               installation, GitHub Pages, suppression de la passkey
   - Historique : les dépenses **déjà payées apparaissent même si leur date est future** (en tête, jours
     futurs d'abord) ; « À venir ce mois-ci » se place juste au-dessus d'aujourd'hui. Les prévues futures
     non payées n'y figurent toujours pas (seulement dans le cumul « À venir ce mois-ci »).
+- **Version 1.3.0** — signification des couleurs précisée par l'utilisateur : **rouge = carte de crédit**
+  (solde à régler en fin de période, mode de paiement principal, choix par défaut), **vert = carte de
+  débit** (déjà réglé).
+  - Nouveau champ chiffré `card: 'credit' | 'debit'` sur la dépense. Fiches sans ce champ : débit si elle
+    vient d'une récurrente, crédit sinon (comportement inchangé pour l'existant).
+  - Saisie : case **« Déjà réglé (carte de débit) »**, décochée par défaut, décochée de nouveau après
+    chaque ajout. Même case dans la modification (pour corriger après coup).
+  - Dépenses des récurrentes : débit (vert) par défaut ; modifiables une par une.
+  - CSV : colonne « Carte » (Crédit / Débit).
+  - Interprétation : le message disait « déjà réglé avec ma carte de crédit » ; compris comme « de débit »
+    (cohérent avec le reste du message) — à confirmer par l'utilisateur.
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

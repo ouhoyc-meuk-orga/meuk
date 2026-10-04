@@ -8,6 +8,8 @@
 //     label  : texte libre, obligatoire
 //     at     : date et heure locales « 2026-10-04T10:24:37 »
 //     planned: true pour une dépense « prévue » (hors de tous les totaux) jusqu'à confirmation « Payée »
+//     card   : 'credit' (carte de crédit, reste à régler : rouge) ou 'debit' (carte de débit, déjà réglé : vert).
+//              Absent (anciennes fiches) : débit pour une dépense de récurrente, crédit sinon.
 // Les données déchiffrées ne vivent qu'en mémoire, tant que l'app est déverrouillée.
 
 import * as db from './db.js';
@@ -34,6 +36,7 @@ export function isValid(v) {
   if (v.type === 'expense') {
     return validAmountLabel(v) && typeof v.at === 'string' && STAMP.test(v.at) &&
       (v.planned === undefined || typeof v.planned === 'boolean') &&
+      (v.card === undefined || v.card === 'credit' || v.card === 'debit') &&
       (v.recurringId === undefined || typeof v.recurringId === 'string') &&
       (v.month === undefined || (typeof v.month === 'string' && MONTH.test(v.month)));
   }
@@ -98,8 +101,9 @@ export async function deleteValue(id) {
 
 // Une dépense créée sur une date future est « prévue ».
 // paid : dépense déjà réglée même si sa date est future (récurrente payée d'avance).
-export function add({ amount, label, at, planned, paid, recurringId, month }) {
+export function add({ amount, label, at, planned, paid, recurringId, month, card }) {
   const item = { id: newId(), type: 'expense', v: 1, amount, label: label.trim(), at };
+  if (card) item.card = card;
   if (!paid && (planned || dayOf(at) > today())) item.planned = true;
   if (recurringId) item.recurringId = recurringId;
   if (month) item.month = month;
@@ -107,10 +111,11 @@ export function add({ amount, label, at, planned, paid, recurringId, month }) {
 }
 
 // Modifier la date vers le futur rend la dépense « prévue » ; une prévue le reste jusqu'à « Payée ».
-export function update(id, { amount, label, at }) {
+export function update(id, { amount, label, at, card }) {
   const current = expenses.get(id);
   if (!current) throw new Error('Dépense introuvable.');
   const item = { ...current, amount, label: label.trim(), at };
+  if (card) item.card = card;
   if (dayOf(at) > today()) item.planned = true;
   return saveValue(item);
 }
@@ -184,4 +189,9 @@ export function allRecurring() {
 
 export function getRecurring(id) {
   return recurrings.get(id);
+}
+
+// Carte de débit (déjà réglé, vert) ? Sinon carte de crédit (reste à régler, rouge).
+export function isDebit(e) {
+  return e.card ? e.card === 'debit' : Boolean(e.recurringId);
 }

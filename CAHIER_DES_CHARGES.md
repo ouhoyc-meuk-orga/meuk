@@ -224,6 +224,14 @@ README.md               installation, GitHub Pages, suppression de la passkey
 
 ## 14. État actuel
 
-- Plan validé ; feu vert donné pour l'**étape 0** (test PRF).
-- Étape 0 : page de test à la racine (`index.html`, `js/test-prf.js`, `css/test-prf.css`), remplacée par
-  l'app à l'étape 1.
+- **Étape 0 validée** (4 octobre 2026) sur l'iPhone : Face ID demandé, PRF fourni (256 bits), même clé
+  d'un onglet à l'autre (empreinte identique), chaîne HKDF → AES-GCM OK. Le plan est confirmé, pas
+  d'alternative nécessaire.
+  - Un essai en navigation privée a renvoyé « opération annulée » (Face ID non abouti) : iOS ne précise
+    jamais la raison ; prévoir un simple message « Déverrouillage annulé — réessayer ».
+  - La passkey de test « Meuk (test) » existe encore : la faire supprimer au début de l'étape 2.
+  - Rappeler de ne jamais utiliser l'app en navigation privée (données effacées à la fermeture).
+- **Étape 1 en cours** : socle (structure, CSP, manifest, icônes, service worker, bannière de mise à jour,
+  version 0.1.0). Fichiers : `index.html`, `manifest.webmanifest`, `sw.js`, `css/app.css`, `js/app.js`,
+  `js/format.js`, `js/update.js`, `js/version.js`, `icons/` (dont `icon.svg`, source des PNG).
+  La version est dupliquée dans `js/version.js` et `sw.js` (doivent rester identiques).

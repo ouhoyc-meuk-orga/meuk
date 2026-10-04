@@ -114,6 +114,25 @@ export async function decryptJSON(key, box) {
   return JSON.parse(dec.decode(await aesDecrypt(key, box, AAD_RECORD)));
 }
 
+// Fiche de données : son identifiant (en clair dans la base) est lié au contenu chiffré,
+// donc deux fiches ne peuvent pas être échangées ou recopiées sans que le déchiffrement échoue.
+function recordAad(id) {
+  return enc.encode('meuk/record/v1/' + id);
+}
+
+export function encryptRecord(key, id, value) {
+  return aesEncrypt(key, enc.encode(JSON.stringify(value)), recordAad(id));
+}
+
+export async function decryptRecord(key, id, box) {
+  return JSON.parse(dec.decode(await aesDecrypt(key, box, recordAad(id))));
+}
+
+// Identifiant aléatoire de 16 octets, en hexadécimal.
+export function newId() {
+  return Array.from(randomBytes(16), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 // --- Phrase de secours (BIP39 français, 12 mots = 128 bits + 4 bits de contrôle) ---
 
 // « Élève » → « eleve » : accents et majuscules facultatifs à la saisie.

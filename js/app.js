@@ -1,7 +1,8 @@
 // Démarrage de Meuk, navigation entre les onglets, et passage verrouillé / déverrouillé.
 
 import { VERSION } from './version.js';
-import { formatLongDate } from './format.js';
+import * as expenses from './expenses.js';
+import * as todayView from './views/today.js';
 import { initUpdates } from './update.js';
 import * as vault from './vault.js';
 import * as security from './views/security.js';
@@ -26,10 +27,18 @@ function showView(id) {
   window.scrollTo(0, 0);
 }
 
-function showApp(notice) {
+async function showApp(notice) {
   security.hide();
   settings.hidden = true;
-  $('today-date').textContent = formatLongDate(new Date());
+  try {
+    await expenses.load();
+  } catch (err) {
+    notice = 'Les dépenses n\'ont pas pu être lues : ' + (err && err.message ? err.message : err);
+  }
+  if (expenses.unreadableCount() > 0) {
+    notice = (notice ? notice + ' ' : '') + expenses.unreadableCount() + ' fiche(s) illisible(s) ignorée(s).';
+  }
+  todayView.render();
   $('app-notice').textContent = notice || '';
   $('app-notice').hidden = !notice;
   // L'app s'ouvre toujours sur Aujourd'hui.
@@ -47,8 +56,10 @@ let reloadWhenVisible = false;
 
 function onLocked() {
   vault.lock();
+  expenses.clear();
   app.hidden = true;
   settings.hidden = true;
+  todayView.closeEdit();
   security.showLock({ auto: false });
   if (document.visibilityState === 'hidden') {
     reloadWhenVisible = true;
@@ -78,6 +89,7 @@ async function openSettings() {
 }
 
 tabs.forEach((tab) => tab.addEventListener('click', () => showView(tab.dataset.view)));
+todayView.init();
 $('btn-settings').addEventListener('click', openSettings);
 $('btn-settings-close').addEventListener('click', () => { settings.hidden = true; });
 $('btn-lock-now').addEventListener('click', () => {

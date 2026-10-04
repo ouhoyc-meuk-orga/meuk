@@ -109,7 +109,23 @@
     <p id="app-notice" class="notice" role="status" hidden></p>
     <section id="view-today" class="view" data-title="Aujourd'hui">
       <p id="today-date" class="date-heading"></p>
-      <p class="placeholder">La saisie des dépenses arrive à l'étape 3.</p>
+
+      <form id="add-form" class="card entry-form" novalidate autocomplete="off">
+        <label class="amount-field">
+          <input id="add-amount" type="text" inputmode="decimal" placeholder="0,00" enterkeyhint="next" autocomplete="off" aria-label="Montant">
+          <span class="currency" aria-hidden="true">€</span>
+        </label>
+        <input id="add-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+        <p id="add-error" class="form-error" role="alert"></p>
+        <button type="submit" class="button-primary button-wide">Ajouter</button>
+      </form>
+
+      <div class="day-summary">
+        <span>Total du jour</span>
+        <span id="day-total" class="day-total"></span>
+      </div>
+      <ul id="day-list" class="list expense-list"></ul>
+      <p id="day-empty" class="empty">Aucune dépense ce jour.</p>
     </section>
     <section id="view-history" class="view" data-title="Historique" hidden>
       <p class="placeholder">L'historique arrive à l'étape 5.</p>
@@ -140,6 +156,27 @@
       <span>Récurrentes</span>
     </button>
   </nav>
+
+  <section id="edit-sheet" class="sheet" aria-labelledby="edit-title" hidden>
+    <header class="sheet-header">
+      <h2 id="edit-title" class="sheet-title-small">Modifier</h2>
+      <button id="btn-edit-cancel" type="button" class="button-link">Annuler</button>
+    </header>
+    <form id="edit-form" class="card entry-form" novalidate autocomplete="off">
+      <label class="amount-field">
+        <input id="edit-amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-label="Montant">
+        <span class="currency" aria-hidden="true">€</span>
+      </label>
+      <input id="edit-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+      <div class="datetime-fields">
+        <label class="field"><span>Date</span><input id="edit-date" type="date"></label>
+        <label class="field"><span>Heure</span><input id="edit-time" type="time" step="1"></label>
+      </div>
+      <p id="edit-error" class="form-error" role="alert"></p>
+      <button type="submit" class="button-primary button-wide">Enregistrer</button>
+    </form>
+    <button id="btn-edit-delete" type="button" class="button-danger button-wide">Supprimer la dépense</button>
+  </section>
 
   <section id="settings" class="sheet" aria-labelledby="settings-title" hidden>
     <header class="sheet-header">

@@ -217,3 +217,109 @@ main {
 }
 
 .list-item:last-child { border-bottom: 0; }
+
+/* Champs de saisie (iOS : la sélection doit rester possible dans les champs) */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  font: inherit;
+  font-size: 17px;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--separator);
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+}
+
+textarea { resize: none; }
+
+input:focus,
+textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.button-wide { width: 100%; }
+.settings-action { margin-top: 24px; }
+
+.notice {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Écrans de sécurité */
+.auth {
+  min-height: 100vh;
+  padding: calc(env(safe-area-inset-top) + 32px) calc(env(safe-area-inset-right) + 20px)
+    calc(env(safe-area-inset-bottom) + 24px) calc(env(safe-area-inset-left) + 20px);
+}
+
+.auth-screen {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-screen h1 { margin: 0; font-size: 30px; font-weight: 700; }
+.auth-screen p { margin: 0; }
+
+.auth-logo {
+  width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  align-self: center;
+  margin: 24px 0 8px;
+}
+
+#auth-lock h1 { text-align: center; margin-bottom: 16px; }
+
+.auth-steps { margin: 0; padding-left: 22px; }
+.auth-steps li { margin: 4px 0; }
+
+.auth-warning {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--fg);
+  border-left: 4px solid #ff9f0a;
+}
+
+.auth-warning p { margin: 0 0 8px; }
+
+.auth-error { color: #ff453a; font-weight: 500; min-height: 1px; }
+.auth-error:empty { display: none; }
+
+.phrase-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: word;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.phrase-grid li {
+  counter-increment: word;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.phrase-grid li::before {
+  content: counter(word) ".";
+  display: inline-block;
+  min-width: 28px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.field span { color: var(--muted); font-size: 15px; }

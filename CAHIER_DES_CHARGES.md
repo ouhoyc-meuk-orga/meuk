@@ -251,3 +251,26 @@ README.md               installation, GitHub Pages, suppression de la passkey
   - Leçon : une correction du mécanisme de mise à jour ne peut se tester qu'à la version SUIVANTE (pendant
     l'attente, c'est l'ancien code qui tourne). Le test de la 0.1.2 a donc échoué normalement ; la 0.1.3
     (seul le numéro change) sert à tester « Plus tard » + retour, et le message après fermeture complète.
+- **Étape 1 terminée** (mises à jour testées sur l'iPhone jusqu'à la 0.1.3 : message réaffiché après
+  « Plus tard », message « Meuk a été mis à jour » après fermeture complète).
+- **Étape 2 en cours** (version 0.2.0) — choix techniques :
+  - Face ID n'est déclenché que par un appui de bouton (exigence iOS) : la création demande donc deux
+    appuis + Face ID (créer la passkey, puis activer le chiffrement), le déverrouillage un appui.
+  - Identifiant utilisateur WebAuthn **fixe** (`meuk-user-v1`) : recréer une passkey (phrase de secours,
+    réinstallation) remplace l'ancienne dans Mots de passe au lieu d'en accumuler. Conséquence : ne jamais
+    créer un 2e coffre Meuk sur un autre appareil Apple (il remplacerait la passkey du premier, qui devrait
+    alors passer par la phrase de secours).
+  - Phrase : 12 mots BIP39 FR standard (128 bits + contrôle), vérifiés identiques à la bibliothèque de
+    référence ; saisie sans accents ni majuscules acceptée ; la clé « phrase » dérive des 16 octets
+    retrouvés (PBKDF2-SHA256, 600 000 itérations, sel aléatoire).
+  - Vérification : 3 mots tirés au hasard, une seule fois ; rien n'est enregistré avant.
+  - Coffre (IndexedDB `meuk` v2, magasin `vault`) : identifiant de passkey, sels, nombre d'itérations,
+    clé de données chiffrée par PRF et par la phrase, témoin chiffré. Aucun mot de la phrase stocké.
+    Magasin `records` créé (vide) pour les dépenses.
+  - Après la phrase de secours : déverrouillage, puis proposition d'une nouvelle passkey (remplace l'ancienne).
+  - Verrouillage : arrière-plan (`visibilitychange`, `pagehide`), 5 min d'inactivité, bouton « Verrouiller
+    maintenant » dans Réglages ; suspendu pendant une demande Face ID.
+  - Safari et l'app de l'écran d'accueil ont des stockages SÉPARÉS : la création affiche un avertissement
+    hors écran d'accueil.
+  - Réglages affiche l'état du stockage persistant (« protégé » / « non protégé »).
+  - Fichiers ajoutés hors arborescence prévue : `js/vault.js` (logique du coffre), `js/views/security.js`.

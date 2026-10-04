@@ -21,6 +21,82 @@
   <script type="module" src="js/app.js"></script>
 </head>
 <body>
+  <div id="fatal" class="auth" hidden>
+    <section class="auth-screen">
+      <h1>Problème</h1>
+      <p id="fatal-text"></p>
+    </section>
+  </div>
+
+  <div id="auth" class="auth" hidden>
+    <section id="auth-welcome" class="auth-screen" hidden>
+      <img class="auth-logo" src="icons/icon-192.png" alt="" width="88" height="88">
+      <h1>Bienvenue dans Meuk</h1>
+      <p>Tes dépenses restent sur ce téléphone, chiffrées. Pour les protéger, Meuk va :</p>
+      <ol class="auth-steps">
+        <li>créer une <strong>passkey</strong> protégée par Face ID ;</li>
+        <li>te donner une <strong>phrase de secours</strong> de 12 mots, à noter sur papier.</li>
+      </ol>
+      <div id="auth-not-standalone" class="auth-warning" hidden>
+        <p>Ouvre Meuk depuis son <strong>icône sur l'écran d'accueil</strong>, pas depuis Safari : les deux n'ont pas les mêmes données.</p>
+        <button id="btn-setup-anyway" type="button" class="button-link">Continuer quand même</button>
+      </div>
+      <button id="btn-setup-start" type="button" class="button-primary button-wide">Créer ma passkey</button>
+      <p id="err-setup-start" class="auth-error" role="alert"></p>
+    </section>
+
+    <section id="auth-activate" class="auth-screen" hidden>
+      <h1>Activer le chiffrement</h1>
+      <p>Passkey créée. Une dernière confirmation Face ID permet de fabriquer ta clé de chiffrement.</p>
+      <button id="btn-setup-activate" type="button" class="button-primary button-wide">Continuer avec Face ID</button>
+      <p id="err-setup-activate" class="auth-error" role="alert"></p>
+    </section>
+
+    <section id="auth-phrase" class="auth-screen" hidden>
+      <h1>Ta phrase de secours</h1>
+      <p>Note ces 12 mots <strong>sur papier</strong>, dans l'ordre, avec leur numéro. Ils permettent de tout récupérer si tu perds ta passkey.</p>
+      <p class="auth-warning">Pas de photo, pas de capture d'écran, pas de Notes. Personne d'autre ne doit les voir. Ils ne seront plus jamais affichés.</p>
+      <ol id="phrase-words" class="phrase-grid"></ol>
+      <button id="btn-phrase-done" type="button" class="button-primary button-wide">Je l'ai notée</button>
+    </section>
+
+    <section id="auth-verify" class="auth-screen" hidden>
+      <h1>Vérification</h1>
+      <p>Retape les mots demandés, à partir de ton papier. Les accents sont facultatifs.</p>
+      <div id="verify-fields"></div>
+      <button id="btn-verify" type="button" class="button-primary button-wide">Vérifier</button>
+      <p id="err-verify" class="auth-error" role="alert"></p>
+      <button id="btn-verify-back" type="button" class="button-link">Revoir la phrase</button>
+    </section>
+
+    <section id="auth-lock" class="auth-screen" hidden>
+      <img class="auth-logo" src="icons/icon-192.png" alt="" width="88" height="88">
+      <h1>Meuk est verrouillée</h1>
+      <button id="btn-unlock" type="button" class="button-primary button-wide">Déverrouiller avec Face ID</button>
+      <p id="err-unlock" class="auth-error" role="alert"></p>
+      <button id="btn-show-recover" type="button" class="button-link">J'ai perdu ma passkey : utiliser la phrase de secours</button>
+    </section>
+
+    <section id="auth-recover" class="auth-screen" hidden>
+      <h1>Phrase de secours</h1>
+      <p>Tape tes 12 mots dans l'ordre, séparés par des espaces. Les accents sont facultatifs.</p>
+      <textarea id="recover-input" rows="4" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
+      <button id="btn-recover" type="button" class="button-primary button-wide">Déverrouiller</button>
+      <p id="err-recover" class="auth-error" role="alert"></p>
+      <button id="btn-recover-back" type="button" class="button-link">Retour</button>
+    </section>
+
+    <section id="auth-newkey" class="auth-screen" hidden>
+      <h1>Nouvelle passkey</h1>
+      <p>Phrase correcte : tes données sont déverrouillées. Crée une nouvelle passkey pour retrouver Face ID. Elle remplacera l'ancienne.</p>
+      <button id="btn-newkey-create" type="button" class="button-primary button-wide">Créer la nouvelle passkey</button>
+      <button id="btn-newkey-activate" type="button" class="button-primary button-wide" hidden>Activer avec Face ID</button>
+      <p id="err-newkey" class="auth-error" role="alert"></p>
+      <button id="btn-newkey-skip" type="button" class="button-link">Plus tard</button>
+    </section>
+  </div>
+
+  <div id="app" hidden>
   <header class="topbar">
     <h1 id="view-title">Aujourd'hui</h1>
     <button id="btn-settings" class="icon-button" type="button" aria-label="Réglages">
@@ -28,22 +104,9 @@
     </button>
   </header>
 
-  <div id="update-banner" class="banner" role="status" hidden>
-    <p>Une nouvelle version de Meuk est disponible.</p>
-    <div class="banner-actions">
-      <button id="btn-update-later" type="button" class="button-secondary">Plus tard</button>
-      <button id="btn-update-apply" type="button" class="button-primary">Mettre à jour</button>
-    </div>
-  </div>
-
-  <div id="updated-banner" class="banner" role="status" hidden>
-    <p id="updated-text"></p>
-    <div class="banner-actions">
-      <button id="btn-updated-ok" type="button" class="button-primary">OK</button>
-    </div>
-  </div>
 
   <main>
+    <p id="app-notice" class="notice" role="status" hidden></p>
     <section id="view-today" class="view" data-title="Aujourd'hui">
       <p id="today-date" class="date-heading"></p>
       <p class="placeholder">La saisie des dépenses arrive à l'étape 3.</p>
@@ -85,8 +148,26 @@
     </header>
     <ul class="list">
       <li class="list-item muted">Export, import, CSV et effacement arrivent à l'étape 8.</li>
+      <li class="list-item"><span>Chiffrement</span><span class="muted">actif</span></li>
+      <li class="list-item"><span>Stockage</span><span id="storage-status" class="muted"></span></li>
       <li class="list-item"><span>Version</span><span id="app-version" class="muted"></span></li>
     </ul>
+    <button id="btn-lock-now" type="button" class="button-secondary button-wide settings-action">Verrouiller maintenant</button>
   </section>
+  </div>
+  <div id="update-banner" class="banner" role="status" hidden>
+    <p>Une nouvelle version de Meuk est disponible.</p>
+    <div class="banner-actions">
+      <button id="btn-update-later" type="button" class="button-secondary">Plus tard</button>
+      <button id="btn-update-apply" type="button" class="button-primary">Mettre à jour</button>
+    </div>
+  </div>
+
+  <div id="updated-banner" class="banner" role="status" hidden>
+    <p id="updated-text"></p>
+    <div class="banner-actions">
+      <button id="btn-updated-ok" type="button" class="button-primary">OK</button>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; manifest-src 'self'; worker-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <title>Meuk — test Face ID</title>
+  <link rel="stylesheet" href="css/test-prf.css">
+  <script src="js/test-prf.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Meuk — test Face ID</h1>
+    <p class="intro">Page de test (étape 0). Elle n'enregistre rien et n'envoie rien.</p>
+
+    <section>
+      <h2>1. Créer la passkey de test</h2>
+      <p>À faire une seule fois. iOS va demander Face ID et proposer d'enregistrer « Meuk (test) ».</p>
+      <button id="btn-create" type="button">Créer la passkey de test</button>
+    </section>
+
+    <section>
+      <h2>2. Tester Face ID + clé</h2>
+      <p>À faire <strong>deux fois de suite</strong> : la clé obtenue doit être identique.</p>
+      <button id="btn-test" type="button">Tester Face ID</button>
+    </section>
+
+    <section>
+      <h2>Résultat</h2>
+      <ul id="log" aria-live="polite"></ul>
+      <button id="btn-clear" type="button" class="secondary">Effacer l'affichage</button>
+    </section>
+  </main>
+</body>
+</html>

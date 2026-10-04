@@ -95,3 +95,42 @@ export async function generate() {
   }
   return created;
 }
+
+// Mois à venir (après le mois en cours) : les récurrentes y sont montrées à l'avance, comme des prévues
+// « virtuelles » (pas encore enregistrées), sauf si la dépense de ce mois existe déjà (payée d'avance).
+export function projected(month) {
+  if (month <= currentMonth()) return [];
+  const out = [];
+  for (const rec of store.allRecurring()) {
+    if (month < rec.start || (rec.last && month <= rec.last)) continue;
+    if (store.all().some((e) => e.recurringId === rec.id && e.month === month)) continue;
+    out.push({
+      id: 'virtuelle-' + rec.id + '-' + month,
+      virtual: true,
+      type: 'expense',
+      amount: rec.amount,
+      label: rec.label,
+      at: dayInMonth(month, rec.day) + 'T00:00:00',
+      planned: true,
+      recurringId: rec.id,
+      month
+    });
+  }
+  return out.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+}
+
+// « Payée » sur une récurrente d'un mois à venir : la dépense est créée tout de suite, déjà payée.
+// La génération du mois, le moment venu, ne la recréera pas (même récurrente, même mois).
+export async function payInAdvance(virtualItem) {
+  const rec = store.getRecurring(virtualItem.recurringId);
+  if (!rec) throw new Error('Récurrente introuvable.');
+  if (store.all().some((e) => e.recurringId === rec.id && e.month === virtualItem.month)) return;
+  await store.add({
+    amount: rec.amount,
+    label: rec.label,
+    at: dayInMonth(virtualItem.month, rec.day) + 'T00:00:00',
+    paid: true,
+    recurringId: rec.id,
+    month: virtualItem.month
+  });
+}

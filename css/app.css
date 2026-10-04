@@ -646,7 +646,7 @@ select {
 #import-step-phrase textarea { margin-bottom: 0; }
 
 /* Total du mois (Aujourd'hui) */
-.month-summary { margin-top: -2px; margin-bottom: 12px; }
+.month-summary { margin-bottom: 6px; }
 .month-total {
   color: var(--fg);
   font-size: 17px;
@@ -669,3 +669,6 @@ select {
   font-weight: 500;
 }
 .upcoming-total { color: var(--fg); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Récurrente d'un mois à venir (pas encore enregistrée) : ligne non modifiable */
+.expense-row:disabled { opacity: 1; color: inherit; cursor: default; }

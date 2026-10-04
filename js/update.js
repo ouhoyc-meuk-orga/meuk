@@ -4,7 +4,7 @@
 // - tant que l'app est ouverte, une nouvelle version attend : un message propose « Mettre à jour » ou
 //   « Plus tard », et revient à chaque retour dans l'app ;
 // - si l'app est complètement fermée, iOS installe la nouvelle version à la réouverture (impossible à
-//   empêcher simplement) : l'app l'indique alors par « Meuk a été mis à jour ».
+//   empêcher simplement) : l'app l'indique alors par « L'app a été mise à jour ».
 
 import { VERSION } from './version.js';
 import { getMeta, setMeta } from './db.js';
@@ -35,7 +35,7 @@ async function announceNewVersion() {
   try {
     const lastVersion = await getMeta('lastVersion');
     if (lastVersion && lastVersion !== VERSION) {
-      document.getElementById('updated-text').textContent = 'Meuk a été mis à jour (version ' + VERSION + ').';
+      document.getElementById('updated-text').textContent = 'L\'app a été mise à jour (version ' + VERSION + ').';
       updatedBanner.hidden = false;
     }
     if (lastVersion !== VERSION) await setMeta('lastVersion', VERSION);

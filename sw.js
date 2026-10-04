@@ -1,11 +1,11 @@
-// Service worker de Meuk.
+// Service worker de l'app Dépenses.
 // Rôle unique : garder une copie des fichiers de l'app pour qu'elle marche hors connexion.
 // Il ne lit, ne stocke et ne transmet JAMAIS de données de dépenses, et ne contacte aucun autre domaine.
 // Une nouvelle version n'est appliquée que lorsque l'utilisateur le demande (bouton « Mettre à jour »).
 'use strict';
 
 // Doit être identique à js/version.js.
-const VERSION = '1.4.0';
+const VERSION = '1.5.0';
 const CACHE = 'meuk-' + VERSION;
 
 const FILES = [

@@ -1,4 +1,6 @@
-# Meuk
+# Dépenses
+
+(Nom de code du dépôt : « meuk ».)
 
 Carnet de dépenses privé pour iPhone. **Les dépenses ne quittent jamais le téléphone** :
 pas de serveur, pas de compte, rien n'est chargé depuis Internet.
@@ -17,11 +19,11 @@ Ne jamais publier d'autre site dans l'organisation `ouhoyc-meuk-orga`.
 
 1. Ouvrir l'adresse ci-dessus dans **Safari**, dans un onglet **normal** (pas en navigation privée).
 2. Bouton **Partager** → **« Sur l'écran d'accueil »** → **Ajouter**.
-3. Ouvrir **Meuk** depuis l'écran d'accueil (et non plus depuis Safari).
+3. Ouvrir **Dépenses** depuis l'écran d'accueil (et non plus depuis Safari).
 
 ## Mises à jour
 
-Quand une nouvelle version est publiée, Meuk affiche un message en ouvrant l'app.
+Quand une nouvelle version est publiée, l'app affiche un message en ouvrant l'app.
 La mise à jour ne s'applique que si l'on appuie sur **« Mettre à jour »**.
 La version installée est visible dans **Réglages** (roue dentée).
 
@@ -42,9 +44,9 @@ Pour publier une nouvelle version : changer le numéro dans `js/version.js` **et
 
 ## Sauvegardes
 
-Faire régulièrement **Réglages → Exporter une sauvegarde chiffrée** et ranger le fichier `.meuk` ailleurs
+Faire régulièrement **Réglages → Exporter une sauvegarde chiffrée** et ranger le fichier (`depenses-sauvegarde-AAAA-MM-JJ.json`) ailleurs
 que sur le téléphone (iCloud Drive, ordinateur…). Il ne peut être lu qu'avec la **phrase de secours**.
-Sur un nouvel iPhone : installer Meuk, créer un coffre, puis **Importer une sauvegarde** et taper la phrase
+Sur un nouvel iPhone : installer l'app, créer un coffre, puis **Importer une sauvegarde** et taper la phrase
 de secours de l'ancien coffre.
 
 ## Supprimer la passkey (Face ID)

@@ -369,4 +369,15 @@ README.md               installation, GitHub Pages, suppression de la passkey
     police système, rien de téléchargé) ; cartes arrondies (20 px) avec ombres légères en mode clair ;
     totaux du mois et du jour réunis dans une carte ; montant de saisie centré, en grand ; boutons ronds
     pour la navigation ; badges en pastille ; barre d'onglets floutée ; écrans de sécurité aérés.
+- **Version 1.5.0** — l'app s'appelle désormais **« Dépenses »** (nom sous l'icône, titre, textes,
+  passkey créée sous ce nom). **Nouvelle icône** : carnet noir à élastique, vu en plongée, stylo plume
+  dessus et billets verts qui dépassent, sur fond anthracite (générée par l'utilisateur avec Higgsfield ;
+  source recadrée : `icons/icon-1024.png`, l'ancien `icon.svg` est supprimé).
+  - L'adresse (`ouhoyc-meuk-orga.github.io/meuk`) et les identifiants internes (base `meuk`, étiquettes
+    de chiffrement, `meuk-user-v1`) **ne changent pas** : la passkey et les données en dépendent.
+  - iOS fige nom et icône à l'ajout sur l'écran d'accueil : il faut supprimer l'ancienne icône et
+    ré-ajouter l'app (l'utilisateur n'a encore aucune donnée : pas de sauvegarde à transférer ; un nouveau
+    coffre et une nouvelle phrase de secours seront créés, la nouvelle passkey remplace l'ancienne).
+  - Fichiers exportés renommés : `depenses-sauvegarde-AAAA-MM-JJ.json`, `depenses-AAAA-MM-JJ.csv`
+    (l'import accepte toujours `.meuk` et `.json`).
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

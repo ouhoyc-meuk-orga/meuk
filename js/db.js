@@ -1,4 +1,4 @@
-// Base IndexedDB de Meuk : le SEUL endroit où l'app enregistre quelque chose.
+// Base IndexedDB de l'app : le SEUL endroit où l'app enregistre quelque chose.
 //
 // Magasins :
 // - « meta »    : informations techniques NON sensibles, en clair (ex. numéro de la dernière version vue) ;
@@ -29,7 +29,7 @@ function openDb() {
         resolve(db);
       };
       request.onerror = () => reject(request.error);
-      request.onblocked = () => reject(new Error('Base bloquée par un autre onglet de Meuk.'));
+      request.onblocked = () => reject(new Error('Base bloquée par un autre onglet de l\'app.'));
     });
   }
   return dbPromise;

@@ -1,4 +1,4 @@
-// Chiffrement de Meuk (WebCrypto uniquement, aucune bibliothèque).
+// Chiffrement de l'app Dépenses (WebCrypto uniquement, aucune bibliothèque).
 //
 // Principe « en enveloppe » :
 // - une clé de données aléatoire (AES-GCM 256) chiffre les données ;

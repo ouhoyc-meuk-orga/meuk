@@ -1,4 +1,4 @@
-// Le coffre de Meuk : création, déverrouillage (Face ID ou phrase de secours), verrouillage.
+// Le coffre de l'app : création, déverrouillage (Face ID ou phrase de secours), verrouillage.
 // La clé de données n'existe qu'en mémoire, et seulement quand le coffre est déverrouillé.
 
 import * as db from './db.js';

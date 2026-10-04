@@ -773,7 +773,23 @@ main {
 
 /* ---------- Écrans de sécurité ---------- */
 
+/* Écrans d'ouverture (verrouillage, bienvenue…) : toujours sur le gris anthracite de l'icône,
+   en mode clair comme en sombre, pour que le carnet se fonde dans le fond. */
 .auth {
+  --bg: #1f1d22;
+  --surface: #2a282e;
+  --surface-2: #34323a;
+  --fg: #f5f5f7;
+  --muted: #9b99a1;
+  --separator: rgba(255, 255, 255, 0.08);
+  --primary: #f5f5f7;
+  --on-primary: #000000;
+  --green: #32d74b;
+  --red: #ff453a;
+  --shadow: none;
+  color-scheme: dark;
+  background: var(--bg);
+  color: var(--fg);
   min-height: 100vh;
   padding: calc(env(safe-area-inset-top) + 36px) calc(env(safe-area-inset-right) + 22px)
     calc(env(safe-area-inset-bottom) + 28px) calc(env(safe-area-inset-left) + 22px);
@@ -791,16 +807,18 @@ main {
 .auth-screen p { margin: 0; color: var(--muted); line-height: 1.5; }
 .auth-screen p strong { color: var(--fg); }
 
+body:has(> .auth:not([hidden])) { background: #1f1d22; }
+
 .auth-logo {
-  width: 96px;
-  height: 96px;
-  border-radius: 22px;
+  width: min(80vw, 340px);
+  height: auto;
   align-self: center;
-  margin: 28px 0 10px;
-  box-shadow: var(--shadow-strong);
+  margin: 0 0 -12px;
 }
 
-#auth-lock { min-height: calc(100vh - 140px); justify-content: center; }
+#auth-welcome .auth-logo { width: min(62vw, 260px); }
+
+#auth-lock { min-height: calc(100vh - 120px); justify-content: center; }
 #auth-lock h1 { text-align: center; }
 #auth-lock .lock-subtitle { margin: -10px 0 18px; text-align: center; color: var(--muted); font-size: 15px; font-weight: 500; }
 #auth-lock .button-link { color: var(--muted); font-weight: 500; font-size: 15px; }
@@ -813,7 +831,7 @@ main {
 .auth-warning {
   padding: 14px 16px;
   border-radius: var(--radius-sm);
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(255, 159, 10, 0.14);
   color: var(--fg) !important;
   font-size: 15px;
 }

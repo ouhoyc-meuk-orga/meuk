@@ -380,4 +380,8 @@ README.md               installation, GitHub Pages, suppression de la passkey
     coffre et une nouvelle phrase de secours seront créés, la nouvelle passkey remplace l'ancienne).
   - Fichiers exportés renommés : `depenses-sauvegarde-AAAA-MM-JJ.json`, `depenses-AAAA-MM-JJ.csv`
     (l'import accepte toujours `.meuk` et `.json`).
+- **Version 1.5.1** : écrans d'ouverture (verrouillage, bienvenue, phrase de secours…) **toujours sur le
+  gris anthracite de l'icône** (`#1F1D22`), en mode clair comme sombre, barre d'état iOS assortie
+  (`theme-color` modifié pendant ces écrans) ; **carnet affiché en grand** (`icons/logo-720.jpg`, recadrage
+  serré de l'image d'origine, 52 Ko), fondu dans le fond sans carré visible.
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

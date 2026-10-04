@@ -5,7 +5,7 @@
 'use strict';
 
 // Doit être identique à js/version.js.
-const VERSION = '1.5.0';
+const VERSION = '1.5.1';
 const CACHE = 'meuk-' + VERSION;
 
 const FILES = [
@@ -37,7 +37,8 @@ const FILES = [
   'icons/favicon-32.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
-  'icons/icon-maskable-512.png'
+  'icons/icon-maskable-512.png',
+  'icons/logo-720.jpg'
 ];
 
 self.addEventListener('install', (event) => {

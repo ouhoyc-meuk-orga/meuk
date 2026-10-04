@@ -11,7 +11,15 @@ const VERIFY_COUNT = 3;
 let onUnlocked = () => {};
 let verifyPositions = [];
 
+// Barre d'état d'iOS assortie au fond anthracite des écrans d'ouverture.
+const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
+const themeDefaults = themeMetas.map((m) => m.content);
+function setAuthTheme(on) {
+  themeMetas.forEach((m, i) => { m.content = on ? '#1f1d22' : themeDefaults[i]; });
+}
+
 function show(id) {
+  setAuthTheme(true);
   $('auth').hidden = false;
   screens.forEach((s) => { $(s).hidden = s !== id; });
   document.querySelectorAll('.auth-error').forEach((el) => { el.textContent = ''; });
@@ -19,6 +27,7 @@ function show(id) {
 }
 
 export function hide() {
+  setAuthTheme(false);
   $('auth').hidden = true;
 }
 

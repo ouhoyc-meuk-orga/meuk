@@ -35,9 +35,15 @@ function span(className, text) {
 // mode « day »      : libellé, heure dessous, montant
 // mode « history »  : « 10:24:37 — Essence », montant
 // mode « upcoming » : « lun. 5 oct. — Loyer », montant
-export function expenseRow(expense, mode, { isNew = false } = {}) {
+// Couleurs : dépenses issues d'une récurrente en vert, les autres en rouge ; les prévues sont atténuées.
+// swipe : glisser vers la gauche fait apparaître une poubelle rouge ; un appui dessus supprime.
+export function expenseRow(expense, mode, { isNew = false, swipe = false } = {}) {
   const li = document.createElement('li');
-  li.className = 'expense-item' + (expense.planned ? ' is-planned' : '');
+  li.className = 'expense-item ' + (expense.recurringId ? 'kind-recurring' : 'kind-normal') +
+    (expense.planned ? ' is-planned' : '');
+
+  const inner = document.createElement('div');
+  inner.className = 'expense-inner';
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -64,7 +70,7 @@ export function expenseRow(expense, mode, { isNew = false } = {}) {
   right.className = 'expense-right';
   right.append(span('expense-amount', formatAmount(expense.amount)));
   button.append(main, right);
-  li.appendChild(button);
+  inner.appendChild(button);
 
   // Une prévue se confirme d'un tap (même avant sa date, si elle est payée en avance).
   if (expense.planned) {
@@ -74,9 +80,126 @@ export function expenseRow(expense, mode, { isNew = false } = {}) {
     paid.textContent = 'Payée';
     paid.setAttribute('aria-label', 'Marquer « ' + expense.label + ' » comme payée');
     paid.addEventListener('click', () => confirmPaid(expense.id));
-    li.appendChild(paid);
+    inner.appendChild(paid);
   }
+
+  if (swipe) {
+    const trash = document.createElement('button');
+    trash.type = 'button';
+    trash.className = 'swipe-delete';
+    trash.setAttribute('aria-label', 'Supprimer « ' + expense.label + ' »');
+    trash.appendChild(trashIcon());
+    trash.addEventListener('click', () => deleteNow(expense.id));
+    li.appendChild(trash);
+    makeSwipeable(inner);
+  }
+  li.appendChild(inner);
   return li;
+}
+
+// --- Glisser pour supprimer ---
+
+function trashIcon() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6');
+  svg.appendChild(path);
+  return svg;
+}
+const SWIPE_WIDTH = 80;
+let openRow = null;
+
+function setOffset(inner, x) {
+  inner.style.transform = x ? 'translateX(' + x + 'px)' : '';
+}
+
+function closeRow(inner) {
+  inner.classList.remove('is-open');
+  setOffset(inner, 0);
+  if (openRow === inner) openRow = null;
+}
+
+export function closeOpenRow() {
+  if (openRow) closeRow(openRow);
+}
+
+function makeSwipeable(inner) {
+  let startX = 0;
+  let startY = 0;
+  let delta = 0;
+  let tracking = false;
+  let dragging = false;
+  let swallowClick = false;
+
+  inner.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (openRow && openRow !== inner) closeRow(openRow);
+    startX = event.clientX;
+    startY = event.clientY;
+    delta = 0;
+    tracking = true;
+    dragging = false;
+  });
+
+  inner.addEventListener('pointermove', (event) => {
+    if (!tracking) return;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    if (!dragging) {
+      if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+      dragging = true;
+      inner.classList.add('is-dragging');
+      try { inner.setPointerCapture(event.pointerId); } catch (err) { /* sans importance */ }
+    }
+    const base = inner.classList.contains('is-open') ? -SWIPE_WIDTH : 0;
+    delta = dx;
+    setOffset(inner, Math.max(-SWIPE_WIDTH * 1.3, Math.min(0, base + dx)));
+  });
+
+  const finish = () => {
+    if (!tracking) return;
+    tracking = false;
+    if (!dragging) return;
+    dragging = false;
+    swallowClick = true;
+    inner.classList.remove('is-dragging');
+    const base = inner.classList.contains('is-open') ? -SWIPE_WIDTH : 0;
+    if (base + delta < -SWIPE_WIDTH / 2) {
+      inner.classList.add('is-open');
+      setOffset(inner, -SWIPE_WIDTH);
+      openRow = inner;
+    } else {
+      closeRow(inner);
+    }
+  };
+  inner.addEventListener('pointerup', finish);
+  inner.addEventListener('pointercancel', () => {
+    if (dragging) finish();
+    tracking = false;
+  });
+
+  // Après un glissement, ou si la ligne est ouverte, un appui referme au lieu d'ouvrir la modification.
+  inner.addEventListener('click', (event) => {
+    if (swallowClick || inner.classList.contains('is-open')) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!swallowClick) closeRow(inner);
+    }
+    swallowClick = false;
+  }, true);
+}
+
+async function deleteNow(id) {
+  try {
+    await expenses.remove(id);
+    openRow = null;
+    onChange();
+  } catch (err) {
+    window.alert(errorText("La suppression n'a pas pu être faite : ", err));
+  }
 }
 
 export async function confirmPaid(id) {

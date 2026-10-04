@@ -13,6 +13,7 @@ export function render() {
   const items = recurring.list();
   for (const rec of items) {
     const li = document.createElement('li');
+    li.className = 'kind-recurring';
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'expense-row';

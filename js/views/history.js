@@ -1,8 +1,9 @@
 // Écran « Historique » : tous les jours jusqu'à aujourd'hui, du plus récent au plus ancien,
-// groupés par jour avec le total (réel) de chaque jour ; « À venir » en haut s'il y a des prévues futures.
+// groupés par jour avec le total (réel) de chaque jour. En haut, « À venir ce mois-ci » : le montant
+// cumulé des dépenses prévues restantes du mois. Glisser une dépense vers la gauche → poubelle.
 
 import * as expenses from '../expenses.js';
-import { formatAmount, formatDayHeader, dayOf } from '../format.js';
+import { formatAmount, formatDayHeader, dayOf, today } from '../format.js';
 import { $, expenseRow } from './common.js';
 
 function group(title, total, items, mode) {
@@ -21,7 +22,7 @@ function group(title, total, items, mode) {
   }
   const ul = document.createElement('ul');
   ul.className = 'list expense-list';
-  items.forEach((e) => ul.appendChild(expenseRow(e, mode)));
+  items.forEach((e) => ul.appendChild(expenseRow(e, mode, { swipe: true })));
   section.append(header, ul);
   return section;
 }
@@ -30,8 +31,19 @@ export function render() {
   const box = $('history-content');
   box.textContent = '';
 
-  const upcoming = expenses.upcoming();
-  if (upcoming.length) box.appendChild(group('À VENIR', null, upcoming, 'upcoming'));
+  const month = today().slice(0, 7);
+  const upcoming = expenses.upcoming().filter((e) => e.at.startsWith(month + '-'));
+  if (upcoming.length) {
+    const card = document.createElement('div');
+    card.className = 'upcoming-summary';
+    const name = document.createElement('span');
+    name.textContent = 'À venir ce mois-ci';
+    const sum = document.createElement('span');
+    sum.className = 'upcoming-total';
+    sum.textContent = formatAmount(upcoming.reduce((total, e) => total + e.amount, 0));
+    card.append(name, sum);
+    box.appendChild(card);
+  }
 
   const days = new Map();
   for (const e of expenses.untilToday()) {

@@ -10,6 +10,7 @@
   --accent: #248a3d;
   --accent-fg: #ffffff;
   --bar-bg: rgba(249, 249, 249, 0.92);
+  --red: #d70015;
   --tabbar-height: 50px;
 }
 
@@ -23,6 +24,7 @@
     --accent: #30d158;
     --accent-fg: #000000;
     --bar-bg: rgba(22, 22, 24, 0.92);
+    --red: #ff453a;
   }
 }
 
@@ -497,15 +499,52 @@ select {
 .entry-form .hint { margin: 0; }
 
 /* Dépenses prévues : grisées, distinctes des dépenses réelles */
-.expense-item { display: flex; align-items: center; border-bottom: 0.5px solid var(--separator); }
+.expense-item {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 0.5px solid var(--separator);
+}
 .expense-item:last-child { border-bottom: 0; }
+
+.expense-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  touch-action: pan-y;
+  transition: transform 0.2s ease;
+}
+.expense-inner.is-dragging { transition: none; }
 .expense-item .expense-row { flex: 1; border-bottom: 0; }
+
+/* Poubelle rouge révélée en glissant vers la gauche (Historique) */
+.swipe-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #ffffff;
+}
+.swipe-delete svg { width: 26px; height: 26px; stroke-width: 2; }
 .expense-list > li:not(.expense-item) .expense-row { border-bottom: 0.5px solid var(--separator); }
 .expense-list > li:not(.expense-item):last-child .expense-row { border-bottom: 0; }
 
+/* Couleurs : récurrentes en vert, autres dépenses en rouge (libellé + montant) */
+.kind-recurring .expense-label,
+.kind-recurring .expense-amount { color: var(--accent); }
+.kind-normal .expense-label,
+.kind-normal .expense-amount { color: var(--red); }
+
+/* Prévues : atténuées (en plus du badge), pour ne pas les confondre avec les dépenses réelles */
 .is-planned .expense-label,
 .is-planned .expense-amount,
-.is-planned .expense-time-inline { color: var(--muted); }
+.is-planned .expense-time-inline { opacity: 0.55; }
 .is-planned .expense-amount { font-weight: 400; }
 
 .badge {
@@ -605,3 +644,28 @@ select {
 .sheet-action { margin-top: 12px; }
 .sheet .button-primary.button-wide + .form-error { margin-top: 12px; }
 #import-step-phrase textarea { margin-bottom: 0; }
+
+/* Total du mois (Aujourd'hui) */
+.month-summary { margin-top: -2px; margin-bottom: 12px; }
+.month-total {
+  color: var(--fg);
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* « À venir ce mois-ci » (Historique) */
+.upcoming-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--muted);
+  font-weight: 500;
+}
+.upcoming-total { color: var(--fg); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }

@@ -3,7 +3,7 @@
 
 import * as expenses from '../expenses.js';
 import {
-  formatAmount, formatLongDate, parseAmount, toLocalStamp, dayToDate, today, addDays, timeOf, normalizeTime
+  formatAmount, formatMonthShort, formatLongDate, parseAmount, toLocalStamp, dayToDate, today, addDays, timeOf, normalizeTime
 } from '../format.js';
 import { $, expenseRow, attachAmountFilter, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
@@ -36,6 +36,9 @@ export function render(newId) {
   ul.textContent = '';
   list.forEach((e) => ul.appendChild(expenseRow(e, 'day', { isNew: e.id === newId })));
   $('day-total').textContent = formatAmount(expenses.total(list));
+  // Total (réel) du mois du jour affiché.
+  $('month-total').textContent = formatAmount(expenses.total(expenses.forMonth(currentDay.slice(0, 7))));
+  $('month-total-label').textContent = 'Total ' + formatMonthShort(currentDay.slice(0, 7));
   $('day-empty').hidden = list.length > 0;
 
   const due = expenses.dueToConfirm().length;

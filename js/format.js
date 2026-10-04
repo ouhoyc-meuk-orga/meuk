@@ -140,3 +140,10 @@ export function normalizeTime(value) {
   if (/^\d{2}:\d{2}:\d{2}$/.test(value)) return value;
   return null;
 }
+
+// « 2026-10 » → « d'octobre » / « d'août » (pour « Total d'octobre »)
+const monthOnly = new Intl.DateTimeFormat('fr-FR', { month: 'long' });
+export function formatMonthShort(month) {
+  const name = monthOnly.format(dayToDate(month + '-01'));
+  return (/^[aeiouy]/.test(name) ? "d'" : 'de ') + name;
+}

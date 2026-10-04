@@ -334,4 +334,13 @@ README.md               installation, GitHub Pages, suppression de la passkey
 - Étape 9 : relecture de sécurité (aucune requête réseau hors service worker, aucun stockage hors
   IndexedDB, aucun innerHTML/eval, aucun style ou script en ligne, aucune ressource externe) ; textes
   affichés uniquement via `textContent`.
-- **Reste à faire : vérification globale sur l'iPhone par l'utilisateur.**
+- **Version 1.1.0** (retours de l'utilisateur après la 1.0.0) :
+  - Historique : **glisser une dépense vers la gauche** fait apparaître une poubelle rouge ; un appui dessus
+    supprime **sans autre confirmation** (le geste vaut confirmation). Un appui sur une ligne ouverte la
+    referme ; un simple appui ouvre toujours la modification.
+  - **Couleurs** (libellé + montant), partout : dépenses issues d'une récurrente (et modèles de récurrentes)
+    en **vert**, autres dépenses en **rouge**. Les prévues restent atténuées + badge.
+  - Aujourd'hui : **total du mois** (réel) du jour affiché, sous le total du jour (« Total d'octobre »).
+  - Historique : la liste détaillée « À venir » est remplacée par une ligne **« À venir ce mois-ci »** =
+    montant cumulé des prévues restantes du mois en cours, tout en haut (au-dessus du jour).
+- Reste à faire : vérification sur l'iPhone par l'utilisateur.

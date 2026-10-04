@@ -97,9 +97,10 @@ export async function deleteValue(id) {
 // --- Dépenses ---
 
 // Une dépense créée sur une date future est « prévue ».
-export function add({ amount, label, at, planned, recurringId, month }) {
+// paid : dépense déjà réglée même si sa date est future (récurrente payée d'avance).
+export function add({ amount, label, at, planned, paid, recurringId, month }) {
   const item = { id: newId(), type: 'expense', v: 1, amount, label: label.trim(), at };
-  if (planned || dayOf(at) > today()) item.planned = true;
+  if (!paid && (planned || dayOf(at) > today())) item.planned = true;
   if (recurringId) item.recurringId = recurringId;
   if (month) item.month = month;
   return saveValue(item);
@@ -147,10 +148,11 @@ export function forMonth(month) {
   return all().filter((e) => e.at.startsWith(month + '-')).sort(byTimeDesc);
 }
 
-// Toutes les dépenses jusqu'à aujourd'hui inclus, de la plus récente à la plus ancienne.
-export function untilToday() {
+// Historique : toutes les dépenses jusqu'à aujourd'hui, plus les dépenses futures DÉJÀ PAYÉES
+// (ex. récurrente payée d'avance), de la plus récente à la plus ancienne. Les prévues futures n'y sont pas.
+export function forHistory() {
   const t = today();
-  return all().filter((e) => dayOf(e.at) <= t).sort(byTimeDesc);
+  return all().filter((e) => dayOf(e.at) <= t || !e.planned).sort(byTimeDesc);
 }
 
 // Prévues dont la date est passée ou aujourd'hui : à confirmer.

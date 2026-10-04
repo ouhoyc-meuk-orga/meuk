@@ -1,9 +1,10 @@
 // Écran « Récapitulatif » : total du mois (dépenses réelles), nombre de dépenses, jours avec leur total ;
-// les prévues du mois apparaissent grisées, sans total.
+// les prévues du mois apparaissent grisées, sans total. Pour les mois à venir, les récurrentes sont
+// montrées à l'avance (et peuvent être payées d'avance).
 
 import * as expenses from '../expenses.js';
 import { formatAmount, formatMonth, formatDayOfMonth, dayOf } from '../format.js';
-import { currentMonth, nextMonth, previousMonth } from '../recurring.js';
+import { currentMonth, nextMonth, previousMonth, projected } from '../recurring.js';
 import { $, expenseRow } from './common.js';
 
 let month = currentMonth();
@@ -20,7 +21,9 @@ export function render() {
 
   const list = expenses.forMonth(month);
   const real = list.filter((e) => !e.planned);
-  const planned = list.filter((e) => e.planned).reverse();
+  // Prévues du mois + (mois à venir) récurrentes montrées à l'avance, de la plus proche à la plus lointaine.
+  const planned = list.filter((e) => e.planned).concat(projected(month))
+    .sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
   $('recap-total').textContent = formatAmount(expenses.total(real));
   $('recap-count').textContent = real.length === 0 ? 'Aucune dépense'
     : real.length === 1 ? '1 dépense' : real.length + ' dépenses';

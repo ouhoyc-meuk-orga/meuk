@@ -1,6 +1,7 @@
 // Éléments partagés par les écrans : ligne de dépense, feuille de modification, petits utilitaires.
 
 import * as expenses from '../expenses.js';
+import { payInAdvance } from '../recurring.js';
 import {
   formatAmount, cleanAmountInput, parseAmount, centsToInput, dayOf, timeOf, formatShortDate, normalizeTime
 } from '../format.js';
@@ -48,7 +49,9 @@ export function expenseRow(expense, mode, { isNew = false, swipe = false } = {})
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'expense-row' + (isNew ? ' is-new' : '');
-  button.addEventListener('click', () => openEdit(expense.id));
+  // Une récurrente d'un mois à venir n'est pas encore enregistrée : rien à modifier, seulement « Payée ».
+  if (expense.virtual) button.disabled = true;
+  else button.addEventListener('click', () => openEdit(expense.id));
 
   // Les dépenses créées par une récurrente n'ont pas d'heure réelle (00:00:00) : on ne l'affiche pas.
   const fromRecurring = Boolean(expense.recurringId) && timeOf(expense.at) === '00:00:00';
@@ -79,7 +82,7 @@ export function expenseRow(expense, mode, { isNew = false, swipe = false } = {})
     paid.className = 'paid-button';
     paid.textContent = 'Payée';
     paid.setAttribute('aria-label', 'Marquer « ' + expense.label + ' » comme payée');
-    paid.addEventListener('click', () => confirmPaid(expense.id));
+    paid.addEventListener('click', () => (expense.virtual ? payVirtual(expense) : confirmPaid(expense.id)));
     inner.appendChild(paid);
   }
 
@@ -199,6 +202,15 @@ async function deleteNow(id) {
     onChange();
   } catch (err) {
     window.alert(errorText("La suppression n'a pas pu être faite : ", err));
+  }
+}
+
+async function payVirtual(expense) {
+  try {
+    await payInAdvance(expense);
+    onChange();
+  } catch (err) {
+    window.alert(errorText("Le paiement n'a pas pu être enregistré : ", err));
   }
 }
 

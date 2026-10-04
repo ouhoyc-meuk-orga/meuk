@@ -343,4 +343,12 @@ README.md               installation, GitHub Pages, suppression de la passkey
   - Aujourd'hui : **total du mois** (réel) du jour affiché, sous le total du jour (« Total d'octobre »).
   - Historique : la liste détaillée « À venir » est remplacée par une ligne **« À venir ce mois-ci »** =
     montant cumulé des prévues restantes du mois en cours, tout en haut (au-dessus du jour).
+- **Version 1.2.0** (retours de l'utilisateur sur la 1.1.0) :
+  - Aujourd'hui : le **total du mois passe au-dessus** du total du jour.
+  - Récap des **mois à venir** : les récurrentes y sont montrées à l'avance (prévues « virtuelles », non
+    enregistrées, non modifiables). « Payée » sur l'une d'elles crée tout de suite la dépense, déjà payée
+    (paiement d'avance) ; la génération du mois, le moment venu, ne la recrée pas (même récurrente + mois).
+  - Historique : les dépenses **déjà payées apparaissent même si leur date est future** (en tête, jours
+    futurs d'abord) ; « À venir ce mois-ci » se place juste au-dessus d'aujourd'hui. Les prévues futures
+    non payées n'y figurent toujours pas (seulement dans le cumul « À venir ce mois-ci »).
 - Reste à faire : vérification sur l'iPhone par l'utilisateur.

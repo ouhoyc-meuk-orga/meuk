@@ -392,4 +392,31 @@ README.md               installation, GitHub Pages, suppression de la passkey
   - Aujourd'hui : ligne **« Crédit »** entre le total du mois et le total du jour = total des dépenses
     réelles (non prévues) du mois affiché **non « déjà réglées »** (en rouge), montant en rouge. Le mot
     « Crédit » est demandé explicitement par l'utilisateur (seule mention de ce type dans l'app).
-- Reste à faire : vérification sur l'iPhone par l'utilisateur.
+- Version 1.6.0 validée et en ligne. **L'utilisateur utilise l'app quelques semaines sans modification**
+  pour repérer ce qui pêche à l'usage.
+
+## 15. Pistes pour plus tard (notées le 4 octobre 2026, rien de décidé)
+
+Idées de l'utilisateur, à rediscuter après sa période d'utilisation :
+
+- **Réunir Récap et Historique** en un seul onglet.
+- **Libérer l'onglet Récurrentes** : déplacer la gestion des récurrentes dans un autre menu (par exemple
+  Réglages), et utiliser l'onglet libéré pour une nouvelle section, peut-être une catégorie « Chrome »
+  (mot à faire préciser par l'utilisateur : dictée possible de « Crédit » ?) qui suivra des consignes
+  qu'il donnera.
+- **Vue d'ensemble du mois par catégories**, les catégories devant se faire **« un peu toutes seules »**.
+  Contrainte de confidentialité : le classement automatique doit se faire **sur le téléphone**, sans
+  service en ligne (par exemple des règles par mots-clés du libellé : « essence », « Carrefour »… →
+  catégorie), éventuellement apprises à partir des corrections de l'utilisateur.
+
+Autres idées proposées par Claude (à valider) :
+
+- **Rappel de sauvegarde** : afficher la date de la dernière sauvegarde dans Réglages, et un rappel au-delà
+  d'un certain délai (les données n'existent que sur le téléphone).
+- **« Solde réglé »** : un bouton pour passer d'un coup toutes les dépenses rouges du mois en vert une fois
+  la carte remboursée.
+- **Crédit mois par mois dans le Récap**.
+- **Budget du mois** avec une jauge.
+- **Recherche par libellé** dans l'Historique.
+- Textes « Face ID » rendus neutres si l'app est utilisée sur Android (un ami de l'utilisateur pourrait
+  l'installer depuis la même adresse : coffre séparé, aucune donnée partagée ; non testé sur Android).

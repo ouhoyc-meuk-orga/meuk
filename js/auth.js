@@ -40,8 +40,8 @@ export async function createPasskey() {
   try {
     credential = await navigator.credentials.create({
       publicKey: {
-        rp: { name: 'Meuk' },
-        user: { id: USER_ID, name: 'Meuk', displayName: 'Meuk' },
+        rp: { name: 'Dépenses' },
+        user: { id: USER_ID, name: 'Dépenses', displayName: 'Dépenses' },
         challenge: crypto.getRandomValues(new Uint8Array(32)),
         pubKeyCredParams: [
           { type: 'public-key', alg: -7 },

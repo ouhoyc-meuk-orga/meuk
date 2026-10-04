@@ -11,9 +11,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Meuk">
+  <meta name="apple-mobile-web-app-title" content="Dépenses">
   <meta name="format-detection" content="telephone=no">
-  <title>Meuk</title>
+  <title>Dépenses</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -31,14 +31,14 @@
   <div id="auth" class="auth" hidden>
     <section id="auth-welcome" class="auth-screen" hidden>
       <img class="auth-logo" src="icons/icon-192.png" alt="" width="88" height="88">
-      <h1>Bienvenue dans Meuk</h1>
-      <p>Tes dépenses restent sur ce téléphone, chiffrées. Pour les protéger, Meuk va :</p>
+      <h1>Bienvenue</h1>
+      <p>Tes dépenses restent sur ce téléphone, chiffrées. Pour les protéger, l'app va :</p>
       <ol class="auth-steps">
         <li>créer une <strong>passkey</strong> protégée par Face ID ;</li>
         <li>te donner une <strong>phrase de secours</strong> de 12 mots, à noter sur papier.</li>
       </ol>
       <div id="auth-not-standalone" class="auth-warning" hidden>
-        <p>Ouvre Meuk depuis son <strong>icône sur l'écran d'accueil</strong>, pas depuis Safari : les deux n'ont pas les mêmes données.</p>
+        <p>Ouvre l'app depuis son <strong>icône sur l'écran d'accueil</strong>, pas depuis Safari : les deux n'ont pas les mêmes données.</p>
         <button id="btn-setup-anyway" type="button" class="button-link">Continuer quand même</button>
       </div>
       <button id="btn-setup-start" type="button" class="button-primary button-wide">Créer ma passkey</button>
@@ -71,7 +71,8 @@
 
     <section id="auth-lock" class="auth-screen" hidden>
       <img class="auth-logo" src="icons/icon-192.png" alt="" width="88" height="88">
-      <h1>Meuk est verrouillée</h1>
+      <h1>Dépenses</h1>
+      <p class="lock-subtitle">Verrouillé</p>
       <button id="btn-unlock" type="button" class="button-primary button-wide">Déverrouiller avec Face ID</button>
       <p id="err-unlock" class="auth-error" role="alert"></p>
       <button id="btn-show-recover" type="button" class="button-link">J'ai perdu ma passkey : utiliser la phrase de secours</button>
@@ -328,15 +329,15 @@
   <div id="erased" class="auth" hidden>
     <section class="auth-screen">
       <h1>Données effacées</h1>
-      <p>Toutes les données de Meuk ont été supprimées de ce téléphone.</p>
-      <p>Pour supprimer aussi la passkey : app <strong>Mots de passe</strong> → rechercher <strong>ouhoyc-meuk-orga.github.io</strong> → choisir la passkey « Meuk » → <strong>Supprimer</strong>.</p>
+      <p>Toutes les données de l'app ont été supprimées de ce téléphone.</p>
+      <p>Pour supprimer aussi la passkey : app <strong>Mots de passe</strong> → rechercher <strong>ouhoyc-meuk-orga.github.io</strong> → choisir la passkey de l'app → <strong>Supprimer</strong>.</p>
       <p>Tu peux aussi retirer l'icône de l'écran d'accueil.</p>
       <button id="btn-restart" type="button" class="button-primary button-wide">Recommencer</button>
     </section>
   </div>
 
   <div id="update-banner" class="banner" role="status" hidden>
-    <p>Une nouvelle version de Meuk est disponible.</p>
+    <p>Une nouvelle version est disponible.</p>
     <div class="banner-actions">
       <button id="btn-update-later" type="button" class="button-secondary">Plus tard</button>
       <button id="btn-update-apply" type="button" class="button-primary">Mettre à jour</button>

@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Meuk",
-  "short_name": "Meuk",
+  "name": "Dépenses",
+  "short_name": "Dépenses",
   "description": "Carnet de dépenses privé : tout reste sur le téléphone.",
   "lang": "fr",
   "start_url": "./",

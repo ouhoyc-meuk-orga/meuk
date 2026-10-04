@@ -14,7 +14,7 @@ let onErased = () => {};
 
 function importMessage(err) {
   switch (err && err.code) {
-    case 'invalid-file': return "Ce fichier n'est pas une sauvegarde Meuk.";
+    case 'invalid-file': return "Ce fichier n'est pas une sauvegarde de l'app Dépenses.";
     case 'wrong-phrase': return 'Cette phrase ne correspond pas à cette sauvegarde.';
     case 'corrupted': return 'La sauvegarde est endommagée : rien n\'a été importé.';
     case 'word-count': return 'Il faut exactement 12 mots (' + err.detail + ' saisis).';
@@ -170,8 +170,8 @@ async function decryptWithPhrase() {
 async function applyImport(mode) {
   if (!pendingItems) return;
   const question = mode === 'merge'
-    ? 'Fusionner : les dépenses de la sauvegarde absentes de Meuk seront ajoutées. Rien ne sera supprimé.\n\nContinuer ?'
-    : 'Remplacer : TOUTES les données actuelles de Meuk seront remplacées par celles de la sauvegarde.\n\nContinuer ?';
+    ? 'Fusionner : les dépenses de la sauvegarde absentes de l\'app seront ajoutées. Rien ne sera supprimé.\n\nContinuer ?'
+    : 'Remplacer : TOUTES les données actuelles de l\'app seront remplacées par celles de la sauvegarde.\n\nContinuer ?';
   if (!window.confirm(question)) return;
   try {
     const { added, removed } = await backup.applyImport(pendingItems, mode);
@@ -188,7 +188,7 @@ async function applyImport(mode) {
 // --- Effacement total ---
 
 async function eraseAll() {
-  if (!window.confirm('Effacer TOUTES les données de Meuk sur ce téléphone ?\n\n' +
+  if (!window.confirm('Effacer TOUTES les données de l\'app sur ce téléphone ?\n\n' +
     'Dépenses, récurrentes et coffre chiffré seront supprimés.')) return;
   if (!window.confirm('Dernière confirmation : cette action est IRRÉVERSIBLE.\n\n' +
     'Sans sauvegarde, tes dépenses seront perdues définitivement. Effacer ?')) return;

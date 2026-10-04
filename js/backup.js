@@ -56,7 +56,7 @@ export async function buildEncryptedExport() {
     canary: boxToB64(vault.canary),
     records: records.map((r) => ({ id: r.id, ...boxToB64(r.box) }))
   };
-  const name = 'meuk-sauvegarde-' + today() + '.meuk';
+  const name = 'depenses-sauvegarde-' + today() + '.json';
   return new File([JSON.stringify(content)], name, { type: 'application/json' });
 }
 
@@ -179,7 +179,7 @@ export function buildCsv() {
     ]);
   }
   const text = '﻿' + rows.map((r) => r.map(csvCell).join(';')).join('\r\n') + '\r\n';
-  return new File([text], 'meuk-depenses-' + today() + '.csv', { type: 'text/csv' });
+  return new File([text], 'depenses-' + today() + '.csv', { type: 'text/csv' });
 }
 
 // --- Effacement total ---

@@ -1,4 +1,4 @@
-// Démarrage de Meuk, navigation entre les onglets, et passage verrouillé / déverrouillé.
+// Démarrage de l'app Dépenses, navigation entre les onglets, et passage verrouillé / déverrouillé.
 
 import { initUpdates } from './update.js';
 import * as vault from './vault.js';
@@ -145,7 +145,7 @@ async function start() {
     state = await vault.init();
   } catch (err) {
     $('fatal').hidden = false;
-    $('fatal-text').textContent = 'Impossible d\'ouvrir la base de Meuk : ' + (err && err.message ? err.message : err);
+    $('fatal-text').textContent = 'Impossible d\'ouvrir la base de données : ' + (err && err.message ? err.message : err);
     return;
   }
   const lockedByUser = window.location.hash === '#verrouille';

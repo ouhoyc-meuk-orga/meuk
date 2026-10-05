@@ -8,6 +8,7 @@ import * as expenses from './expenses.js';
 import { generate } from './recurring.js';
 import * as security from './views/security.js';
 import { initCommon, closeEdit } from './views/common.js';
+import { initDialogs, cancelDialog, hideToast } from './views/dialog.js';
 import * as todayView from './views/today.js';
 import * as historyView from './views/history.js';
 import * as recapView from './views/recap.js';
@@ -42,6 +43,8 @@ function refresh(newId) {
 }
 
 function closeSheets() {
+  cancelDialog();
+  hideToast();
   closeEdit();
   recurringView.closeSheet();
   settingsView.closeAll();
@@ -123,6 +126,7 @@ tabs.forEach((tab) => tab.addEventListener('click', () => {
   if (tab.dataset.view === 'view-today') todayView.showToday();
   showView(tab.dataset.view);
 }));
+initDialogs();
 initCommon({ onChange: () => refresh() });
 todayView.init({ onChange: refresh });
 recapView.init({

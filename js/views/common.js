@@ -2,6 +2,7 @@
 
 import * as expenses from '../expenses.js';
 import { payInAdvance } from '../recurring.js';
+import { confirmDialog, alertDialog, showToast } from './dialog.js';
 import {
   formatAmount, cleanAmountInput, parseAmount, centsToInput, dayOf, timeOf, formatShortDate, normalizeTime
 } from '../format.js';
@@ -203,14 +204,29 @@ function makeSwipeable(inner) {
   }, true);
 }
 
+// Suppression immédiate (le geste vaut confirmation), avec 3 secondes pour annuler :
+// la dépense est alors réenregistrée à l'identique (même identifiant, même contenu).
+const UNDO_MS = 3000;
+
 async function deleteNow(id) {
+  const removed = expenses.get(id);
   try {
     await expenses.remove(id);
     openRow = null;
     onChange();
   } catch (err) {
-    window.alert(errorText("La suppression n'a pas pu être faite : ", err));
+    alertDialog('Suppression impossible', errorText('', err));
+    return;
   }
+  if (!removed) return;
+  showToast('Dépense supprimée', 'Annuler', async () => {
+    try {
+      await expenses.saveValue(removed);
+      onChange();
+    } catch (err) {
+      alertDialog('Annulation impossible', errorText('', err));
+    }
+  }, UNDO_MS);
 }
 
 async function payVirtual(expense) {
@@ -218,7 +234,7 @@ async function payVirtual(expense) {
     await payInAdvance(expense);
     onChange();
   } catch (err) {
-    window.alert(errorText("Le paiement n'a pas pu être enregistré : ", err));
+    alertDialog('Paiement non enregistré', errorText('', err));
   }
 }
 
@@ -227,7 +243,7 @@ export async function confirmPaid(id) {
     await expenses.confirmPaid(id);
     onChange();
   } catch (err) {
-    window.alert(errorText("La confirmation n'a pas pu être enregistrée : ", err));
+    alertDialog('Confirmation non enregistrée', errorText('', err));
   }
 }
 
@@ -292,7 +308,13 @@ async function onPaid() {
 async function onDelete() {
   const expense = expenses.get(editingId);
   if (!expense) return closeEdit();
-  if (!window.confirm('Supprimer « ' + expense.label + ' » (' + formatAmount(expense.amount) + ') ?')) return;
+  const ok = await confirmDialog({
+    title: 'Supprimer cette dépense ?',
+    message: expense.label + ' — ' + formatAmount(expense.amount),
+    confirmLabel: 'Supprimer',
+    destructive: true
+  });
+  if (!ok) return;
   try {
     await expenses.remove(editingId);
     closeEdit();

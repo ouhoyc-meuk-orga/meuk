@@ -5,6 +5,7 @@ import * as vault from '../vault.js';
 import { VERSION } from '../version.js';
 import { withoutAutoLock } from '../lock.js';
 import { $, errorText } from './common.js';
+import { confirmDialog } from './dialog.js';
 
 let preparedFile = null;
 let pendingBackup = null;
@@ -86,11 +87,13 @@ async function exportEncrypted() {
   }
 }
 
-function exportCsv() {
-  const ok = window.confirm(
-    'Attention : le fichier CSV n\'est PAS chiffré.\n\n' +
-    'Toutes tes dépenses y seront lisibles par quiconque obtient le fichier ' +
-    '(et par les apps ou services où tu l\'enregistres ou l\'envoies).\n\nContinuer ?');
+async function exportCsv() {
+  const ok = await confirmDialog({
+    title: 'Fichier non chiffré',
+    message: 'Toutes tes dépenses seront lisibles par quiconque obtient le fichier, ' +
+      'et par les apps ou services où tu l\'enregistres ou l\'envoies.',
+    confirmLabel: 'Exporter quand même'
+  });
   if (!ok) return;
   showFile(backup.buildCsv(), 'Export CSV (non chiffré)',
     'Fichier lisible par tous (tableur). Supprime-le quand tu n\'en as plus besoin.');
@@ -169,10 +172,19 @@ async function decryptWithPhrase() {
 
 async function applyImport(mode) {
   if (!pendingItems) return;
-  const question = mode === 'merge'
-    ? 'Fusionner : les dépenses de la sauvegarde absentes de l\'app seront ajoutées. Rien ne sera supprimé.\n\nContinuer ?'
-    : 'Remplacer : TOUTES les données actuelles de l\'app seront remplacées par celles de la sauvegarde.\n\nContinuer ?';
-  if (!window.confirm(question)) return;
+  const ok = await confirmDialog(mode === 'merge'
+    ? {
+      title: 'Fusionner avec tes données ?',
+      message: 'Les dépenses de la sauvegarde absentes de l\'app seront ajoutées. Rien ne sera supprimé.',
+      confirmLabel: 'Fusionner'
+    }
+    : {
+      title: 'Remplacer tes données ?',
+      message: 'TOUTES les données actuelles de l\'app seront remplacées par celles de la sauvegarde.',
+      confirmLabel: 'Remplacer',
+      destructive: true
+    });
+  if (!ok) return;
   try {
     const { added, removed } = await backup.applyImport(pendingItems, mode);
     closeAll();
@@ -188,10 +200,18 @@ async function applyImport(mode) {
 // --- Effacement total ---
 
 async function eraseAll() {
-  if (!window.confirm('Effacer TOUTES les données de l\'app sur ce téléphone ?\n\n' +
-    'Dépenses, récurrentes et coffre chiffré seront supprimés.')) return;
-  if (!window.confirm('Dernière confirmation : cette action est IRRÉVERSIBLE.\n\n' +
-    'Sans sauvegarde, tes dépenses seront perdues définitivement. Effacer ?')) return;
+  if (!(await confirmDialog({
+    title: 'Effacer toutes les données ?',
+    message: 'Dépenses, récurrentes et coffre chiffré seront supprimés de ce téléphone.',
+    confirmLabel: 'Continuer',
+    destructive: true
+  }))) return;
+  if (!(await confirmDialog({
+    title: 'Dernière confirmation',
+    message: 'Cette action est IRRÉVERSIBLE. Sans sauvegarde, tes dépenses seront perdues définitivement.',
+    confirmLabel: 'Tout effacer',
+    destructive: true
+  }))) return;
   try {
     await backup.eraseEverything();
     onErased();

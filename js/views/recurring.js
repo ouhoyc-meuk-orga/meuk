@@ -2,6 +2,7 @@
 
 import * as recurring from '../recurring.js';
 import { formatAmount, parseAmount, centsToInput } from '../format.js';
+import { confirmDialog } from './dialog.js';
 import { $, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
 let editingId = null;
@@ -79,7 +80,13 @@ async function onSave(event) {
 async function onDelete() {
   const rec = recurring.list().find((r) => r.id === editingId);
   if (!rec) return closeSheet();
-  if (!window.confirm('Supprimer la récurrente « ' + rec.label + ' » ?\nLes dépenses déjà créées sont conservées.')) return;
+  const ok = await confirmDialog({
+    title: 'Supprimer la récurrente « ' + rec.label + ' » ?',
+    message: 'Les dépenses déjà créées sont conservées.',
+    confirmLabel: 'Supprimer',
+    destructive: true
+  });
+  if (!ok) return;
   try {
     await recurring.remove(editingId);
     closeSheet();

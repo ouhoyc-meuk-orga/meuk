@@ -444,7 +444,7 @@ Retenus par l'utilisateur :
   appui à côté = Annuler) à la place des `confirm()` / `alert()` de Safari : suppression d'une dépense ou
   d'une récurrente, export CSV, import (fusion / remplacement), effacement total (2 étapes). `js/views/dialog.js`.
 
-**Refusés par l'utilisateur** (ne pas reproposer sans raison nouvelle) : signe en plus de la couleur
+**Écartés pour l'instant** (l'utilisateur reste ouvert à ce qu'ils soient reproposés plus tard) : signe en plus de la couleur
 vert / rouge, contrastes du gris et du vert en mode clair, agrandissement des zones tactiles (« Payée »,
 « Revenir à aujourd'hui », boutons ronds), « Réduire les animations », taille de texte iOS (Dynamic Type),
 fermeture des feuilles en glissant, titres visibles au-dessus des champs, réactivation du zoom.

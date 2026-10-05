@@ -915,3 +915,80 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 /* Bouton jour / nuit (barre du haut) */
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 .theme-button svg { width: 19px; height: 19px; }
+
+/* ---------- Fenêtres de confirmation (façon feuille d'action iOS) ---------- */
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 calc(env(safe-area-inset-right) + 10px) calc(env(safe-area-inset-bottom) + 10px)
+    calc(env(safe-area-inset-left) + 10px);
+  background: rgba(0, 0, 0, 0.45);
+  animation: fade-in 0.2s ease;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 480px;
+  padding: 22px 18px 18px;
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--shadow-strong);
+  animation: slide-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dialog h2 { margin: 0 0 6px; font-size: 19px; font-weight: 700; letter-spacing: -0.02em; text-align: center; }
+.dialog p { margin: 0 0 18px; color: var(--muted); font-size: 15px; line-height: 1.45; text-align: center; overflow-wrap: anywhere; }
+.dialog-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.dialog p + .dialog-actions { margin-top: 0; }
+
+.button-destructive {
+  min-height: 52px;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--red);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 600;
+}
+.button-destructive:active { transform: scale(0.98); opacity: 0.85; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Bandeau « Dépense supprimée — Annuler » ---------- */
+
+.toast {
+  position: fixed;
+  left: calc(env(safe-area-inset-left) + 12px);
+  right: calc(env(safe-area-inset-right) + 12px);
+  bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 14px);
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 8px 6px 18px;
+  border-radius: 16px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: var(--shadow-strong);
+  animation: slide-up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.toast-action {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  color: var(--on-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

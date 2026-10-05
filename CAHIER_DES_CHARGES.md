@@ -433,3 +433,18 @@ Autres idées proposées par Claude (à valider) :
 - Barre d'état iOS assortie au thème choisi (`theme-color`) ; les écrans d'ouverture restent anthracite.
 - `js/theme.js` ; CSS : variables du mode nuit appliquées par `prefers-color-scheme` sauf si
   `data-theme="light"`, ou forcées par `data-theme="dark"`.
+
+## 17. Version 1.8.0 — suite de l'audit UI/UX (5 octobre 2026)
+
+Audit réalisé avec la compétence « UI/UX Pro Max » (liste de vérification mobile, contrastes mesurés).
+Retenus par l'utilisateur :
+- **Bandeau « Dépense supprimée — Annuler »** après une suppression par glissement dans l'Historique,
+  **3 secondes** (choix de l'utilisateur) ; « Annuler » réenregistre la dépense à l'identique (même id).
+- **Fenêtres de confirmation assorties à l'app** (feuille qui monte du bas, bouton dangereux en rouge,
+  appui à côté = Annuler) à la place des `confirm()` / `alert()` de Safari : suppression d'une dépense ou
+  d'une récurrente, export CSV, import (fusion / remplacement), effacement total (2 étapes). `js/views/dialog.js`.
+
+**Refusés par l'utilisateur** (ne pas reproposer sans raison nouvelle) : signe en plus de la couleur
+vert / rouge, contrastes du gris et du vert en mode clair, agrandissement des zones tactiles (« Payée »,
+« Revenir à aujourd'hui », boutons ronds), « Réduire les animations », taille de texte iOS (Dynamic Type),
+fermeture des feuilles en glissant, titres visibles au-dessus des champs, réactivation du zoom.

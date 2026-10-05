@@ -346,6 +346,22 @@
     </section>
   </div>
 
+  <div id="dialog" class="dialog-backdrop" hidden>
+    <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-message">
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-message"></p>
+      <div class="dialog-actions">
+        <button id="dialog-confirm" type="button" class="button-primary button-wide"></button>
+        <button id="dialog-cancel" type="button" class="button-secondary button-wide">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden>
+    <span id="toast-text"></span>
+    <button id="toast-action" type="button" class="toast-action"></button>
+  </div>
+
   <div id="update-banner" class="banner" role="status" hidden>
     <p>Une nouvelle version est disponible.</p>
     <div class="banner-actions">

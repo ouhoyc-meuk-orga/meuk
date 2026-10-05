@@ -3,6 +3,7 @@
 import * as vault from '../vault.js';
 import { passkeysSupported } from '../auth.js';
 import { withoutAutoLock } from '../lock.js';
+import { setStatusBarOverride } from '../theme.js';
 
 const $ = (id) => document.getElementById(id);
 const screens = ['auth-welcome', 'auth-activate', 'auth-phrase', 'auth-verify', 'auth-lock', 'auth-recover', 'auth-newkey'];
@@ -12,10 +13,8 @@ let onUnlocked = () => {};
 let verifyPositions = [];
 
 // Barre d'état d'iOS assortie au fond anthracite des écrans d'ouverture.
-const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
-const themeDefaults = themeMetas.map((m) => m.content);
 function setAuthTheme(on) {
-  themeMetas.forEach((m, i) => { m.content = on ? '#1f1d22' : themeDefaults[i]; });
+  setStatusBarOverride(on ? '#1f1d22' : null);
 }
 
 function show(id) {

@@ -409,6 +409,10 @@ Idées de l'utilisateur, à rediscuter après sa période d'utilisation :
   service en ligne (par exemple des règles par mots-clés du libellé : « essence », « Carrefour »… →
   catégorie), éventuellement apprises à partir des corrections de l'utilisateur.
 
+- **Bouton discret mode jour / mode nuit**, pour choisir le thème au lieu de suivre seulement le réglage de
+  l'iPhone (par exemple : Auto / Clair / Sombre). Le choix devra être retenu : c'est une préférence non
+  sensible, à enregistrer dans le magasin `meta` de la base (signalé à l'utilisateur, conformément au §4).
+
 Autres idées proposées par Claude (à valider) :
 
 - **Rappel de sauvegarde** : afficher la date de la dernière sauvegarde dans Réglages, et un rappel au-delà

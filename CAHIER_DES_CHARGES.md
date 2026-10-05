@@ -444,7 +444,17 @@ Retenus par l'utilisateur :
   appui à côté = Annuler) à la place des `confirm()` / `alert()` de Safari : suppression d'une dépense ou
   d'une récurrente, export CSV, import (fusion / remplacement), effacement total (2 étapes). `js/views/dialog.js`.
 
-**Écartés pour l'instant** (l'utilisateur reste ouvert à ce qu'ils soient reproposés plus tard) : signe en plus de la couleur
-vert / rouge, contrastes du gris et du vert en mode clair, agrandissement des zones tactiles (« Payée »,
+**Écartés pour l'instant** (l'utilisateur reste ouvert à ce qu'ils soient reproposés plus tard) : agrandissement des zones tactiles (« Payée »,
 « Revenir à aujourd'hui », boutons ronds), « Réduire les animations », taille de texte iOS (Dynamic Type),
 fermeture des feuilles en glissant, titres visibles au-dessus des champs, réactivation du zoom.
+
+## 18. Version 1.9.0 — signes « réglé / à régler » et contrastes (5 octobre 2026)
+
+- **Signe en plus de la couleur** (accessibilité : ne pas transmettre l'information par la couleur seule),
+  choisi sur maquettes (variante « W2 ») : **coche épaisse** = déjà réglé (vert), **sablier avec un peu de
+  sable** = à régler (rouge). **Uniquement les signes, sans rond, cercle ni fond** (demande explicite de
+  l'utilisateur). Même taille (16 px), placés juste avant le montant, de la couleur du montant ; atténués
+  pour les prévues. Sablier aussi devant le montant de la ligne « Crédit ». `statusSign()` dans
+  `js/views/common.js`, avec un libellé accessible (« Réglé » / « À régler »).
+- **Contrastes du mode clair** relevés à ≥ 4,5:1 : gris secondaire `#86868b` → `#6e6e73`, vert
+  `#17944a` → `#12803d`. Mode sombre inchangé.

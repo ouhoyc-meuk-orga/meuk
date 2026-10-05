@@ -33,6 +33,34 @@ export function attachAmountFilter(input) {
   fitAmount(input);
 }
 
+// Signe en plus de la couleur : coche = déjà réglé, sablier = à régler (même style, sans rond ni fond).
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SIGN_CHECK = 'M3 8.6l3.2 3.1L13 4.6';
+const SIGN_HOURGLASS = 'M4 2h8M4 14h8M5 2v1.6c0 2.1 3 2.8 3 4.4s-3 2.3-3 4.4V14M11 2v1.6c0 2.1-3 2.8-3 4.4s3 2.3 3 4.4V14';
+const SIGN_SAND = 'M6.4 4.2h3.2L8 6.4zM6.2 12.9h3.6c-.3-1.2-1.1-1.8-1.8-2.2-.7.4-1.5 1-1.8 2.2z';
+
+function svgPath(d, attrs) {
+  const path = document.createElementNS(SVG_NS, 'path');
+  path.setAttribute('d', d);
+  for (const [k, v] of Object.entries(attrs)) path.setAttribute(k, v);
+  return path;
+}
+
+export function statusSign(settled) {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'sign');
+  svg.setAttribute('viewBox', '0 0 16 16');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', settled ? 'Réglé' : 'À régler');
+  if (settled) {
+    svg.appendChild(svgPath(SIGN_CHECK, { 'stroke-width': '2.6' }));
+  } else {
+    svg.appendChild(svgPath(SIGN_HOURGLASS, { 'stroke-width': '1.6' }));
+    svg.appendChild(svgPath(SIGN_SAND, { fill: 'currentColor', stroke: 'none' }));
+  }
+  return svg;
+}
+
 function span(className, text) {
   const el = document.createElement('span');
   el.className = className;
@@ -80,7 +108,7 @@ export function expenseRow(expense, mode, { isNew = false, swipe = false } = {})
 
   const right = document.createElement('span');
   right.className = 'expense-right';
-  right.append(span('expense-amount', formatAmount(expense.amount)));
+  right.append(statusSign(expenses.isDebit(expense)), span('expense-amount', formatAmount(expense.amount)));
   button.append(main, right);
   inner.appendChild(button);
 

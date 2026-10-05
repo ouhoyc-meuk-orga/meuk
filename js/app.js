@@ -2,6 +2,7 @@
 
 import './nozoom.js';
 import { initUpdates } from './update.js';
+import { initTheme } from './theme.js';
 import * as vault from './vault.js';
 import * as expenses from './expenses.js';
 import { generate } from './recurring.js';
@@ -140,6 +141,7 @@ $('btn-lock-now').addEventListener('click', () => {
 $('btn-restart').addEventListener('click', () => window.location.replace(window.location.pathname));
 
 async function start() {
+  await initTheme();
   security.init({ onUnlocked });
   let state;
   try {

@@ -409,9 +409,7 @@ Idées de l'utilisateur, à rediscuter après sa période d'utilisation :
   service en ligne (par exemple des règles par mots-clés du libellé : « essence », « Carrefour »… →
   catégorie), éventuellement apprises à partir des corrections de l'utilisateur.
 
-- **Bouton discret mode jour / mode nuit**, pour choisir le thème au lieu de suivre seulement le réglage de
-  l'iPhone (par exemple : Auto / Clair / Sombre). Le choix devra être retenu : c'est une préférence non
-  sensible, à enregistrer dans le magasin `meta` de la base (signalé à l'utilisateur, conformément au §4).
+- ~~Bouton discret mode jour / mode nuit~~ → **fait en version 1.7.0** (voir ci-dessous).
 
 Autres idées proposées par Claude (à valider) :
 
@@ -424,3 +422,14 @@ Autres idées proposées par Claude (à valider) :
 - **Recherche par libellé** dans l'Historique.
 - Textes « Face ID » rendus neutres si l'app est utilisée sur Android (un ami de l'utilisateur pourrait
   l'installer depuis la même adresse : coffre séparé, aucune donnée partagée ; non testé sur Android).
+
+## 16. Version 1.7.0 — mode jour / mode nuit (5 octobre 2026)
+
+- Bouton discret dans la barre du haut, à gauche de la roue dentée : **lune** en mode jour, **soleil** en
+  mode nuit ; un appui bascule.
+- Par défaut (jamais touché), l'app **suit le réglage de l'iPhone**. Une fois choisi, le thème est forcé.
+- Choix retenu dans le magasin `meta` de la base (`theme` = `light` / `dark`, **en clair, non sensible** —
+  signalé à l'utilisateur, conformément au §4). « Effacer toutes mes données » le supprime aussi.
+- Barre d'état iOS assortie au thème choisi (`theme-color`) ; les écrans d'ouverture restent anthracite.
+- `js/theme.js` ; CSS : variables du mode nuit appliquées par `prefers-color-scheme` sauf si
+  `data-theme="light"`, ou forcées par `data-theme="dark"`.

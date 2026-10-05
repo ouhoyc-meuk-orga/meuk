@@ -26,10 +26,13 @@
   --radius-sm: 14px;
   --tabbar-height: 54px;
   --gutter: 18px;
+  --switch-off: #e3e3e8;
 }
 
+/* Mode nuit : automatique (réglage de l'iPhone) sauf si l'utilisateur a choisi « jour »… */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --bg: #000000;
     --surface: #141416;
     --surface-2: #232326;
@@ -45,8 +48,32 @@
     --shadow: none;
     --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.6);
     --bar-bg: rgba(14, 14, 16, 0.84);
+    --switch-off: rgba(255, 255, 255, 0.16);
   }
 }
+
+/* … ou forcé quand l'utilisateur a choisi « nuit ». */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface: #141416;
+  --surface-2: #232326;
+  --fg: #f5f5f7;
+  --muted: #8e8e93;
+  --separator: rgba(255, 255, 255, 0.08);
+  --primary: #f5f5f7;
+  --on-primary: #000000;
+  --green: #32d74b;
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  --flash: rgba(50, 215, 75, 0.14);
+  --shadow: none;
+  --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --bar-bg: rgba(14, 14, 16, 0.84);
+  --switch-off: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
 
 /* ---------- Base ---------- */
 
@@ -379,12 +406,8 @@ main {
   height: 31px;
   margin-right: 6px;
   border-radius: 16px;
-  background: var(--separator);
+  background: var(--switch-off);
   transition: background 0.2s ease;
-}
-
-@media (prefers-color-scheme: light) {
-  .switch { background: #e3e3e8; }
 }
 
 .switch::after {
@@ -888,3 +911,7 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 }
 
 #verify-fields .field { margin-bottom: 12px; }
+
+/* Bouton jour / nuit (barre du haut) */
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.theme-button svg { width: 19px; height: 19px; }

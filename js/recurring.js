@@ -46,10 +46,10 @@ export function list() {
   return store.allRecurring().sort((a, b) => a.day - b.day || a.label.localeCompare(b.label, 'fr'));
 }
 
-// Création : le mois en cours compte si le jour n'est pas encore passé, sinon on commence le mois suivant.
+// Création : le mois en cours compte toujours, même si le jour est déjà passé (la dépense est alors
+// « à confirmer » : on la valide ou on la supprime).
 export async function create({ amount, label, day }) {
-  const month = currentMonth();
-  const start = dayInMonth(month, day) >= today() ? month : nextMonth(month);
+  const start = currentMonth();
   const item = { id: newId(), type: 'recurring', v: 1, amount, label: label.trim(), day, start, last: null };
   await store.saveValue(item);
   await generate();
@@ -72,6 +72,11 @@ export function remove(id) {
 export async function generate() {
   const now = currentMonth();
   let created = 0;
+  // Rattrapage de l'ancienne règle (jusqu'à la 1.9.0) : une récurrente créée après son jour commençait le
+  // mois suivant, sans rien créer pour le mois en cours. On la fait commencer au mois en cours.
+  for (const rec of store.allRecurring()) {
+    if (!rec.last && rec.start === nextMonth(now)) await store.saveValue({ ...rec, start: now });
+  }
   for (const rec of store.allRecurring()) {
     let month = rec.last ? nextMonth(rec.last) : rec.start;
     let last = rec.last;

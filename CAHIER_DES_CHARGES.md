@@ -458,3 +458,17 @@ fermeture des feuilles en glissant, titres visibles au-dessus des champs, réact
   `js/views/common.js`, avec un libellé accessible (« Réglé » / « À régler »).
 - **Contrastes du mode clair** relevés à ≥ 4,5:1 : gris secondaire `#86868b` → `#6e6e73`, vert
   `#17944a` → `#12803d`. Mode sombre inchangé.
+
+## 19. Version 1.10.0 — récurrentes et Récap (7 octobre 2026)
+
+- Constat de l'utilisateur : la récurrente « Mia » (le 6), créée après le 6 octobre, n'apparaissait ni au
+  6 octobre ni au 6 novembre dans Aujourd'hui. Cause : l'ancienne règle faisait commencer une récurrente
+  le mois suivant si son jour était passé, et les mois à venir ne sont projetés que dans le Récap.
+- **Nouvelle règle** : une récurrente crée **toujours** la dépense du mois en cours, même si son jour est
+  passé (elle est alors « à confirmer »). Rattrapage automatique des récurrentes créées avec l'ancienne
+  règle (`start` = mois suivant et jamais générées) : elles commencent au mois en cours.
+- **Récap**, comme demandé par l'utilisateur : section **« Date passée — à confirmer »** (prévues dont la
+  date est passée ou aujourd'hui) au-dessus de **« Prévues ce mois-ci »** (date à venir, dont les
+  récurrentes projetées pour les mois futurs) ; validation directe par « Payée » dans les deux.
+- L'écran Aujourd'hui n'est pas modifié (choix de l'utilisateur). Badge « Prévue · récurrente » sur une
+  seule ligne.

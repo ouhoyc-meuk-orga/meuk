@@ -472,3 +472,13 @@ fermeture des feuilles en glissant, titres visibles au-dessus des champs, réact
   récurrentes projetées pour les mois futurs) ; validation directe par « Payée » dans les deux.
 - L'écran Aujourd'hui n'est pas modifié (choix de l'utilisateur). Badge « Prévue · récurrente » sur une
   seule ligne.
+
+## 20. Version 1.11.0 — recréer la dépense du mois d'une récurrente (7 octobre 2026)
+
+- Diagnostic du cas « Mia » : sa dépense du 6 octobre avait été créée puis **supprimée** (par erreur) ;
+  la récurrente considérant octobre comme déjà fait, rien n'était recréé (le rattrapage de la 1.10.0 ne
+  concerne que les récurrentes jamais générées). Les données de l'utilisateur, chiffrées sur son iPhone,
+  ne sont pas lisibles par Claude : diagnostic fait par reproduction + vérifications de l'utilisateur.
+- Fiche d'une récurrente (onglet Récurrentes) : bouton **« Créer la dépense de ce mois »**, visible
+  seulement si la dépense du mois en cours manque ; elle est recréée « prévue » (donc « à confirmer » dans
+  le Récap si sa date est passée), sans doublon, et le mois suivant reste généré normalement.

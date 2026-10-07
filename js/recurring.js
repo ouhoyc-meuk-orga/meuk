@@ -139,3 +139,29 @@ export async function payInAdvance(virtualItem) {
     month: virtualItem.month
   });
 }
+
+// La dépense du mois en cours manque-t-elle ? (ex. supprimée par erreur : la génération ne la recrée pas,
+// le mois étant déjà marqué comme fait.)
+export function missingCurrentMonth(id) {
+  const rec = store.getRecurring(id);
+  const month = currentMonth();
+  if (!rec || rec.start > month) return false;
+  return !store.all().some((e) => e.recurringId === rec.id && e.month === month);
+}
+
+// Recrée la dépense du mois en cours, « prévue » (donc « à confirmer » si sa date est passée).
+export async function createCurrentMonth(id) {
+  const rec = store.getRecurring(id);
+  if (!rec || !missingCurrentMonth(id)) return null;
+  const month = currentMonth();
+  const item = await store.add({
+    amount: rec.amount,
+    label: rec.label,
+    at: dayInMonth(month, rec.day) + 'T00:00:00',
+    planned: true,
+    recurringId: rec.id,
+    month
+  });
+  if (!rec.last || rec.last < month) await store.saveValue({ ...store.getRecurring(id), last: month });
+  return item;
+}

@@ -1,9 +1,9 @@
 // Écran « Récapitulatif » : total du mois (dépenses réelles), nombre de dépenses, jours avec leur total ;
-// les prévues du mois apparaissent grisées, sans total. Pour les mois à venir, les récurrentes sont
+// les prévues du mois apparaissent grisées, sans total : « Date passée — à confirmer » puis « Prévues ce mois-ci ». Pour les mois à venir, les récurrentes sont
 // montrées à l'avance (et peuvent être payées d'avance).
 
 import * as expenses from '../expenses.js';
-import { formatAmount, formatMonth, formatDayOfMonth, dayOf } from '../format.js';
+import { formatAmount, formatMonth, formatDayOfMonth, dayOf, today } from '../format.js';
 import { currentMonth, nextMonth, previousMonth, projected } from '../recurring.js';
 import { $, expenseRow } from './common.js';
 
@@ -52,10 +52,19 @@ export function render() {
     ul.appendChild(li);
   }
 
+  // Prévues dont la date est passée (ou aujourd'hui) : « à confirmer », à valider d'un appui sur « Payée ».
+  const t = today();
+  const due = planned.filter((e) => dayOf(e.at) <= t);
+  const coming = planned.filter((e) => dayOf(e.at) > t);
+  const dl = $('recap-due');
+  dl.textContent = '';
+  due.forEach((e) => dl.appendChild(expenseRow(e, 'upcoming')));
+  $('recap-due-title').hidden = due.length === 0;
+
   const pl = $('recap-planned');
   pl.textContent = '';
-  planned.forEach((e) => pl.appendChild(expenseRow(e, 'upcoming')));
-  $('recap-planned-title').hidden = planned.length === 0;
+  coming.forEach((e) => pl.appendChild(expenseRow(e, 'upcoming')));
+  $('recap-planned-title').hidden = coming.length === 0;
 }
 
 export function init(callbacks) {

@@ -1,8 +1,8 @@
 // Écran « Récurrentes » : créer, modifier, supprimer les dépenses récurrentes.
 
 import * as recurring from '../recurring.js';
-import { formatAmount, parseAmount, centsToInput } from '../format.js';
-import { confirmDialog } from './dialog.js';
+import { formatAmount, parseAmount, centsToInput, formatShortDate, dayOf } from '../format.js';
+import { confirmDialog, alertDialog } from './dialog.js';
 import { $, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
 let editingId = null;
@@ -49,6 +49,8 @@ function openSheet(id) {
   $('rec-error').textContent = '';
   $('rec-edit-note').hidden = !rec;
   $('btn-rec-delete').hidden = !rec;
+  // Bouton visible seulement si la dépense du mois en cours manque (supprimée par erreur, par exemple).
+  $('btn-rec-current').hidden = !rec || !recurring.missingCurrentMonth(rec.id);
   $('rec-sheet').hidden = false;
 }
 
@@ -96,6 +98,21 @@ async function onDelete() {
   }
 }
 
+async function onCreateCurrent() {
+  const id = editingId;
+  try {
+    const item = await recurring.createCurrentMonth(id);
+    closeSheet();
+    onChange();
+    if (item) {
+      alertDialog('Dépense créée', item.label + ' — ' + formatAmount(item.amount) + ', le ' +
+        formatShortDate(dayOf(item.at)) + ' — à confirmer dans le Récap.');
+    }
+  } catch (err) {
+    $('rec-error').textContent = errorText("La dépense n'a pas pu être créée : ", err);
+  }
+}
+
 export function init(callbacks) {
   onChange = callbacks.onChange;
   const select = $('rec-day');
@@ -110,4 +127,5 @@ export function init(callbacks) {
   $('rec-form').addEventListener('submit', onSave);
   $('btn-rec-cancel').addEventListener('click', closeSheet);
   $('btn-rec-delete').addEventListener('click', onDelete);
+  $('btn-rec-current').addEventListener('click', onCreateCurrent);
 }

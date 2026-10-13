@@ -315,7 +315,7 @@ README.md               installation, GitHub Pages, suppression de la passkey
 - Étape 5 : Historique groupé par jour (« DIMANCHE 4 OCTOBRE », année ajoutée si ≠ année en cours), lignes
   « 10:24:37 — Essence — 50,00 € », total réel par jour (pas de total pour un jour sans dépense réelle).
 - Étape 6 : Récap mensuel (total réel, nombre, jours avec total ; prévues grisées) ; appui sur un jour →
-  ce jour dans Aujourd'hui.
+  ce jour dans Aujourd'hui (remplacé en 1.12.0 : le jour se déplie, voir section 21).
 - Étape 7 : `js/recurring.js` : fiche chiffrée `{ type: 'recurring', v: 1, amount, label, day, start, last }` ;
   génération au déverrouillage du premier mois non généré au mois en cours ; anti-doublon par
   `recurringId` + `month` sur la dépense ; jour 31 → dernier jour du mois.
@@ -482,3 +482,12 @@ fermeture des feuilles en glissant, titres visibles au-dessus des champs, réact
 - Fiche d'une récurrente (onglet Récurrentes) : bouton **« Créer la dépense de ce mois »**, visible
   seulement si la dépense du mois en cours manque ; elle est recréée « prévue » (donc « à confirmer » dans
   le Récap si sa date est passée), sans doublon, et le mois suivant reste généré normalement.
+
+## 21. Version 1.12.0 — jours dépliables dans le Récap (13 octobre 2026)
+
+- Récap : un appui sur un jour **déplie ses opérations juste en dessous** (heure, libellé, signe, montant),
+  au lieu d'ouvrir ce jour dans Aujourd'hui. Un nouvel appui replie. Une flèche indique l'état.
+- Dans la liste dépliée : appui sur une opération → fiche de modification ; glisser vers la gauche →
+  supprimer (comme dans l'Historique). Le jour reste déplié après une modification.
+- Changer de mois (ou rouvrir l'app) replie tout. Rien n'est enregistré : l'état ouvert/fermé ne vit
+  qu'en mémoire.

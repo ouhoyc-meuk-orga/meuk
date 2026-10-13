@@ -129,12 +129,7 @@ tabs.forEach((tab) => tab.addEventListener('click', () => {
 initDialogs();
 initCommon({ onChange: () => refresh() });
 todayView.init({ onChange: refresh });
-recapView.init({
-  onOpenDay: (day) => {
-    todayView.setDay(day);
-    showView('view-today');
-  }
-});
+recapView.init();
 recurringView.init({ onChange: () => refresh() });
 settingsView.init({ onChange: () => refresh(), onErased });
 $('btn-settings').addEventListener('click', () => settingsView.open());

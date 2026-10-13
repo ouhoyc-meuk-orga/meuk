@@ -1,4 +1,5 @@
-// Écran « Récapitulatif » : total du mois (dépenses réelles), nombre de dépenses, jours avec leur total ;
+// Écran « Récapitulatif » : total du mois (dépenses réelles), nombre de dépenses, jours avec leur total
+// (un appui sur un jour déplie ses opérations) ;
 // les prévues du mois apparaissent grisées, sans total : « Date passée — à confirmer » puis « Prévues ce mois-ci ». Pour les mois à venir, les récurrentes sont
 // montrées à l'avance (et peuvent être payées d'avance).
 
@@ -8,11 +9,29 @@ import { currentMonth, nextMonth, previousMonth, projected } from '../recurring.
 import { $, expenseRow } from './common.js';
 
 let month = currentMonth();
-let onOpenDay = () => {};
+// Jours dépliés (gardés ouverts quand on modifie une opération ; refermés en changeant de mois).
+const openDays = new Set();
+
+function chevron() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('class', 'recap-chevron');
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M6 9l6 6 6-6');
+  svg.appendChild(path);
+  return svg;
+}
+
+function changeMonth(value) {
+  month = value;
+  openDays.clear();
+  render();
+}
 
 export function showCurrentMonth() {
-  month = currentMonth();
-  render();
+  changeMonth(currentMonth());
 }
 
 export function render() {
@@ -37,18 +56,43 @@ export function render() {
   ul.textContent = '';
   for (const [day, sum] of days) {
     const li = document.createElement('li');
+    li.className = 'recap-day';
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'expense-row';
     const name = document.createElement('span');
     name.className = 'expense-label';
     name.textContent = formatDayOfMonth(day);
+    const right = document.createElement('span');
+    right.className = 'expense-right';
     const amount = document.createElement('span');
     amount.className = 'expense-amount';
     amount.textContent = formatAmount(sum);
-    button.append(name, amount);
-    button.addEventListener('click', () => onOpenDay(day));
+    right.append(amount, chevron());
+    button.append(name, right);
     li.appendChild(button);
+
+    // Un appui déplie (ou replie) les opérations du jour, juste sous la ligne.
+    const ops = document.createElement('ul');
+    ops.className = 'list expense-list recap-day-ops';
+    const fill = () => {
+      ops.textContent = '';
+      expenses.forDay(day).filter((e) => !e.planned)
+        .forEach((e) => ops.appendChild(expenseRow(e, 'history', { swipe: true })));
+    };
+    const setOpen = (open) => {
+      li.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      ops.hidden = !open;
+      if (open) fill();
+    };
+    button.addEventListener('click', () => {
+      const open = !openDays.has(day);
+      if (open) openDays.add(day); else openDays.delete(day);
+      setOpen(open);
+    });
+    li.appendChild(ops);
+    setOpen(openDays.has(day));
     ul.appendChild(li);
   }
 
@@ -67,8 +111,7 @@ export function render() {
   $('recap-planned-title').hidden = coming.length === 0;
 }
 
-export function init(callbacks) {
-  onOpenDay = callbacks.onOpenDay;
-  $('recap-prev').addEventListener('click', () => { month = previousMonth(month); render(); });
-  $('recap-next').addEventListener('click', () => { month = nextMonth(month); render(); });
+export function init() {
+  $('recap-prev').addEventListener('click', () => changeMonth(previousMonth(month)));
+  $('recap-next').addEventListener('click', () => changeMonth(nextMonth(month)));
 }

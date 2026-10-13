@@ -36,7 +36,7 @@ Pour publier une nouvelle version : changer le numéro dans `js/version.js` **et
   date pour changer de jour (heure modifiable pour un autre jour). Une dépense sur une date future est
   « prévue » (grisée, hors des totaux) jusqu'à un appui sur « Payée ».
 - **Historique** : tous les jours jusqu'à aujourd'hui, avec le total de chaque jour ; « À venir » en haut.
-- **Récap** : total et nombre de dépenses du mois, total de chaque jour.
+- **Récap** : total et nombre de dépenses du mois, total de chaque jour (un appui déplie ses opérations).
 - **Récurrentes** : loyer, abonnements… Chaque mois, une dépense prévue est créée à l'ouverture de l'app
   (mois manqués rattrapés).
 - **Réglages** (roue dentée) : sauvegarde chiffrée, import (fusion ou remplacement), export CSV (non

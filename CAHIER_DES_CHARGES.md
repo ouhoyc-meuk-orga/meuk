@@ -516,3 +516,22 @@ fermeture des feuilles en glissant, titres visibles au-dessus des champs, réact
   (modifiables, glisser pour supprimer).
 - Export CSV : colonne « Catégorie ». Sauvegardes chiffrées : les règles y sont incluses (une sauvegarde
   1.13.0 ne peut pas être importée dans une version plus ancienne de l'app).
+
+## 23. Version 1.14.0 — catégories personnalisables et Pokémon (27 octobre 2026)
+
+- **Réglages › Catégories** : liste de toutes les catégories. Appui → feuille de modification.
+  - Catégorie de l'app : seule la **couleur** change (bouton « Remettre la couleur d'origine »).
+  - **« Ajouter une catégorie »** : nom (30 caractères, pas de doublon), couleur, icône. Une catégorie
+    personnelle peut être modifiée ou **supprimée** : ses dépenses et ses règles retombent dans le
+    classement automatique (rien n'est réécrit ; un identifiant inconnu est ignoré à l'affichage).
+  - 40 catégories personnelles au plus.
+- **Palette de 15 couleurs** (choix de l'utilisateur : palette plutôt que roue libre), chacune ajustée
+  pour le mode nuit (`--pal-<clé>`). La couleur est enregistrée par son nom (« orange »), pas en code
+  couleur, pour s'adapter au thème.
+- **Icônes** : 16 nouvelles icônes au trait (animal, sport, voyage, café, musique, jeu vidéo, livre,
+  beauté, bricolage, travail, plante, verre, cœur, étoile, argent, photo), plus celles des catégories de
+  l'app.
+- Réglages chiffrés comme le reste : fiche `{ type: 'category', v: 1, catId, color, name?, icon?, custom? }`
+  (`catId` = id intégré, ou « perso-… » pour une catégorie créée). Inclus dans les sauvegardes chiffrées.
+- **Nouvelle catégorie intégrée « Pokémon »** : icône **Master Ball**, couleur pourpre, mots-clés
+  (pokémon, booster, display, ETB, coffret, carte Pokémon, Pokémon Center, Pikachu, Dracaufeu…).

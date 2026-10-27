@@ -1034,66 +1034,86 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 
 /* ---------- Catégories ---------- */
 
-/* Une couleur vive et fixe par catégorie (pastilles, camembert). Le texte reste dans ses couleurs
-   habituelles : le rouge et le vert des montants gardent leur sens (à régler / déjà réglé). */
+/* Palette des catégories : couleurs vives, la même catégorie a toujours la même couleur (pastilles,
+   camembert). Le texte reste dans ses couleurs habituelles : le rouge et le vert des montants gardent
+   leur sens (à régler / déjà réglé). */
 :root {
-  --cat-alimentation: #30c24d;
-  --cat-restaurants: #ff8a00;
-  --cat-loisirs: #b44cf0;
-  --cat-transport: #0a6cff;
-  --cat-logement: #3a2fc0;
-  --cat-abonnements: #00c4d4;
-  --cat-sante: #f02828;
-  --cat-shopping: #ff63b8;
-  --cat-enfants: #ffd000;
-  --cat-cadeaux: #a0682e;
-  --cat-autre: #c7c7cc;
-  --cat-autre-ink: #1c1c1e;
+  --pal-vert: #30c24d;
+  --pal-emeraude: #00967d;
+  --pal-turquoise: #00c4d4;
+  --pal-bleu: #0a6cff;
+  --pal-indigo: #3a2fc0;
+  --pal-violet: #b44cf0;
+  --pal-pourpre: #7a1fa2;
+  --pal-rose: #ff63b8;
+  --pal-rouge: #f02828;
+  --pal-bordeaux: #9e1b32;
+  --pal-orange: #ff8a00;
+  --pal-jaune: #ffd000;
+  --pal-marron: #a0682e;
+  --pal-gris: #c7c7cc;
+  --pal-graphite: #3a3a3c;
+  --pal-gris-ink: #1c1c1e;
+  --pal-graphite-ink: #ffffff;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --cat-alimentation: #32d74b;
-    --cat-restaurants: #ff9500;
-    --cat-loisirs: #c25cf5;
-    --cat-transport: #0a84ff;
-    --cat-logement: #4a3ae0;
-    --cat-abonnements: #2fd6e3;
-    --cat-sante: #ff453a;
-    --cat-shopping: #ff6fc0;
-    --cat-enfants: #ffe01a;
-    --cat-cadeaux: #9c6a3a;
-    --cat-autre: #636366;
-    --cat-autre-ink: #ffffff;
+    --pal-vert: #32d74b;
+    --pal-emeraude: #16b58f;
+    --pal-turquoise: #2fd6e3;
+    --pal-bleu: #0a84ff;
+    --pal-indigo: #4a3ae0;
+    --pal-violet: #c25cf5;
+    --pal-pourpre: #9b30d0;
+    --pal-rose: #ff6fc0;
+    --pal-rouge: #ff453a;
+    --pal-bordeaux: #c2304f;
+    --pal-orange: #ff9500;
+    --pal-jaune: #ffe01a;
+    --pal-marron: #9c6a3a;
+    --pal-gris: #636366;
+    --pal-graphite: #d1d1d6;
+    --pal-gris-ink: #ffffff;
+    --pal-graphite-ink: #1c1c1e;
   }
 }
 :root[data-theme="dark"] {
-  --cat-alimentation: #32d74b;
-  --cat-restaurants: #ff9500;
-  --cat-loisirs: #c25cf5;
-  --cat-transport: #0a84ff;
-  --cat-logement: #4a3ae0;
-  --cat-abonnements: #2fd6e3;
-  --cat-sante: #ff453a;
-  --cat-shopping: #ff6fc0;
-  --cat-enfants: #ffe01a;
-  --cat-cadeaux: #9c6a3a;
-  --cat-autre: #636366;
-  --cat-autre-ink: #ffffff;
+  --pal-vert: #32d74b;
+  --pal-emeraude: #16b58f;
+  --pal-turquoise: #2fd6e3;
+  --pal-bleu: #0a84ff;
+  --pal-indigo: #4a3ae0;
+  --pal-violet: #c25cf5;
+  --pal-pourpre: #9b30d0;
+  --pal-rose: #ff6fc0;
+  --pal-rouge: #ff453a;
+  --pal-bordeaux: #c2304f;
+  --pal-orange: #ff9500;
+  --pal-jaune: #ffe01a;
+  --pal-marron: #9c6a3a;
+  --pal-gris: #636366;
+  --pal-graphite: #d1d1d6;
+  --pal-gris-ink: #ffffff;
+  --pal-graphite-ink: #1c1c1e;
 }
 
-.cat-alimentation { --cat: var(--cat-alimentation); }
-.cat-restaurants { --cat: var(--cat-restaurants); }
-.cat-loisirs { --cat: var(--cat-loisirs); }
-.cat-transport { --cat: var(--cat-transport); }
-.cat-logement { --cat: var(--cat-logement); }
-.cat-abonnements { --cat: var(--cat-abonnements); }
-.cat-sante { --cat: var(--cat-sante); }
-.cat-shopping { --cat: var(--cat-shopping); }
-.cat-enfants { --cat: var(--cat-enfants); --cat-ink: #1c1c1e; }
-.cat-cadeaux { --cat: var(--cat-cadeaux); }
-.cat-autre { --cat: var(--cat-autre); --cat-ink: var(--cat-autre-ink); }
+.pal-vert { --cat: var(--pal-vert); }
+.pal-emeraude { --cat: var(--pal-emeraude); }
+.pal-turquoise { --cat: var(--pal-turquoise); }
+.pal-bleu { --cat: var(--pal-bleu); }
+.pal-indigo { --cat: var(--pal-indigo); }
+.pal-violet { --cat: var(--pal-violet); }
+.pal-pourpre { --cat: var(--pal-pourpre); }
+.pal-rose { --cat: var(--pal-rose); }
+.pal-rouge { --cat: var(--pal-rouge); }
+.pal-bordeaux { --cat: var(--pal-bordeaux); }
+.pal-orange { --cat: var(--pal-orange); }
+.pal-jaune { --cat: var(--pal-jaune); --cat-ink: #1c1c1e; }
+.pal-marron { --cat: var(--pal-marron); }
+.pal-gris { --cat: var(--pal-gris); --cat-ink: var(--pal-gris-ink); }
+.pal-graphite { --cat: var(--pal-graphite); --cat-ink: var(--pal-graphite-ink); }
 
-/* Pastille : rond de couleur, icône blanche (foncée sur le jaune et le gris clair). */
+/* Pastille : rond de couleur, icône blanche (foncée sur les couleurs claires). */
 .cat-badge {
   width: 36px;
   height: 36px;
@@ -1227,3 +1247,32 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 #cat-sheet-badge { grid-row: 1 / span 2; display: flex; }
 .cat-summary-month { color: var(--muted); font-size: 14px; font-weight: 500; }
 .cat-summary-total { font-family: var(--font-rounded); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+
+/* Réglages › Catégories */
+.cat-settings-list .cat-legend-row { border-bottom: 0.5px solid var(--separator); }
+.cat-settings-list li:last-child .cat-legend-row { border-bottom: 0; }
+.cat-kind { color: var(--muted); font-size: 13px; font-weight: 500; }
+.catedit-preview { display: flex; align-items: center; gap: 14px; padding: 2px 0 6px; }
+.catedit-preview-name { font-size: 20px; font-weight: 700; overflow-wrap: anywhere; }
+.swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; justify-items: center; }
+.swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cat);
+  transition: box-shadow 0.15s ease;
+}
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5.5px var(--fg); }
+.icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; justify-items: center; }
+.icon-choice {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  color: var(--fg);
+}
+.icon-choice svg { width: 22px; height: 22px; stroke-width: 1.9; }
+.icon-choice[aria-pressed="true"] { background: var(--fg); color: var(--bg); }

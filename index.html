@@ -323,6 +323,10 @@
     </ul>
     <input id="import-file" type="file" accept=".meuk,application/json,.json" hidden>
 
+    <h3 class="section-title">Catégories</h3>
+    <ul id="settings-categories" class="list cat-settings-list"></ul>
+    <button id="btn-cat-add" type="button" class="button-secondary button-wide sheet-action">Ajouter une catégorie</button>
+
     <h3 class="section-title">Sécurité</h3>
     <ul class="list">
       <li class="list-item"><span>Chiffrement</span><span class="muted">actif</span></li>
@@ -338,6 +342,36 @@
     <ul class="list settings-footer">
       <li class="list-item"><span>Version</span><span id="app-version" class="muted"></span></li>
     </ul>
+  </section>
+
+  <section id="catedit-sheet" class="sheet" aria-labelledby="catedit-title" hidden>
+    <header class="sheet-header">
+      <h2 id="catedit-title" class="sheet-title-small">Nouvelle catégorie</h2>
+      <button id="btn-catedit-cancel" type="button" class="button-link">Annuler</button>
+    </header>
+    <form id="catedit-form" class="card entry-form" novalidate autocomplete="off">
+      <div class="catedit-preview">
+        <span id="catedit-badge"></span>
+        <span id="catedit-preview-name" class="catedit-preview-name"></span>
+      </div>
+      <div id="catedit-name-field" class="cat-field">
+        <span class="cat-caption">Nom</span>
+        <input id="catedit-name" class="label-field" type="text" placeholder="Nom de la catégorie" autocomplete="off" autocapitalize="sentences" aria-label="Nom de la catégorie">
+      </div>
+      <p id="catedit-builtin-note" class="hint" hidden>Catégorie de l'app : tu peux changer sa couleur.</p>
+      <div class="cat-field">
+        <span class="cat-caption">Couleur</span>
+        <div id="catedit-colors" class="swatch-grid"></div>
+      </div>
+      <div id="catedit-icons-field" class="cat-field">
+        <span class="cat-caption">Icône</span>
+        <div id="catedit-icons" class="icon-grid"></div>
+      </div>
+      <p id="catedit-error" class="form-error" role="alert"></p>
+      <button type="submit" class="button-primary button-wide">Enregistrer</button>
+    </form>
+    <button id="btn-catedit-reset" type="button" class="button-secondary button-wide sheet-action" hidden>Remettre la couleur d'origine</button>
+    <button id="btn-catedit-delete" type="button" class="button-danger button-wide" hidden>Supprimer la catégorie</button>
   </section>
 
   <section id="file-sheet" class="sheet" aria-labelledby="file-title" hidden>

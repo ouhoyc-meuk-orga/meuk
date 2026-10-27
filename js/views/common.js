@@ -3,7 +3,7 @@
 import * as expenses from '../expenses.js';
 import { payInAdvance } from '../recurring.js';
 import { confirmDialog, alertDialog, showToast } from './dialog.js';
-import { CATEGORIES, categoryBadge } from '../categories.js';
+import { allCategories, isCategory, categoryBadge } from '../categories.js';
 import {
   formatAmount, cleanAmountInput, parseAmount, centsToInput, dayOf, timeOf, formatShortDate, normalizeTime
 } from '../format.js';
@@ -281,6 +281,8 @@ export async function confirmPaid(id) {
 // --- Choix de la catégorie (grille d'icônes) ---
 // La catégorie devinée suit le libellé tant que l'utilisateur n'en a pas choisi une à la main.
 
+const pickers = [];
+
 export function categoryPicker(container, labelInput, onSelect = () => {}) {
   const buttons = new Map();
   let selected = null;
@@ -291,26 +293,40 @@ export function categoryPicker(container, labelInput, onSelect = () => {}) {
     for (const [key, button] of buttons) button.setAttribute('aria-pressed', key === id ? 'true' : 'false');
     onSelect(id);
   };
-  for (const cat of CATEGORIES) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'cat-option';
-    const name = document.createElement('span');
-    name.textContent = cat.name;
-    button.append(categoryBadge(cat.id), name);
-    button.addEventListener('click', () => { manual = true; select(cat.id); });
-    buttons.set(cat.id, button);
-    container.appendChild(button);
-  }
+  // Grille (re)construite à chaque ouverture : les catégories peuvent avoir changé (Réglages).
+  const build = () => {
+    container.textContent = '';
+    buttons.clear();
+    for (const cat of allCategories()) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'cat-option';
+      const name = document.createElement('span');
+      name.textContent = cat.name;
+      button.append(categoryBadge(cat.id), name);
+      button.addEventListener('click', () => { manual = true; select(cat.id); });
+      buttons.set(cat.id, button);
+      container.appendChild(button);
+    }
+  };
   labelInput.addEventListener('input', () => {
     if (!manual && !explicit) select(expenses.guessCategory(labelInput.value));
   });
-  return {
+  const picker = {
     // category : catégorie choisie à la main pour cette fiche (ou rien : devinée d'après le libellé).
     reset(category) {
+      build();
       manual = false;
-      explicit = category || null;
-      select(category || expenses.guessCategory(labelInput.value));
+      explicit = category && isCategory(category) ? category : null;
+      select(explicit || expenses.guessCategory(labelInput.value));
+    },
+    // Après un changement de catégories : grille refaite, sans perdre le choix en cours.
+    refresh() {
+      const keep = isCategory(selected) ? selected : null;
+      build();
+      if (manual && keep) select(keep);
+      else if (manual) picker.reset();
+      else select(explicit && isCategory(explicit) ? explicit : expenses.guessCategory(labelInput.value));
     },
     // Catégorie à enregistrer : seulement si elle a été choisie à la main (maintenant ou avant).
     chosen() {
@@ -320,6 +336,12 @@ export function categoryPicker(container, labelInput, onSelect = () => {}) {
       return selected;
     }
   };
+  pickers.push(picker);
+  return picker;
+}
+
+export function refreshPickers() {
+  pickers.forEach((picker) => picker.refresh());
 }
 
 // --- Feuille de modification (commune à tous les écrans) ---

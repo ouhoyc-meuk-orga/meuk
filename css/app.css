@@ -1031,3 +1031,199 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 .kind-normal .sign,
 .credit-value .sign { color: var(--red); }
 .is-planned .sign { opacity: 0.5; }
+
+/* ---------- Catégories ---------- */
+
+/* Une couleur vive et fixe par catégorie (pastilles, camembert). Le texte reste dans ses couleurs
+   habituelles : le rouge et le vert des montants gardent leur sens (à régler / déjà réglé). */
+:root {
+  --cat-alimentation: #30c24d;
+  --cat-restaurants: #ff8a00;
+  --cat-loisirs: #b44cf0;
+  --cat-transport: #0a6cff;
+  --cat-logement: #3a2fc0;
+  --cat-abonnements: #00c4d4;
+  --cat-sante: #f02828;
+  --cat-shopping: #ff63b8;
+  --cat-enfants: #ffd000;
+  --cat-cadeaux: #a0682e;
+  --cat-autre: #c7c7cc;
+  --cat-autre-ink: #1c1c1e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cat-alimentation: #32d74b;
+    --cat-restaurants: #ff9500;
+    --cat-loisirs: #c25cf5;
+    --cat-transport: #0a84ff;
+    --cat-logement: #4a3ae0;
+    --cat-abonnements: #2fd6e3;
+    --cat-sante: #ff453a;
+    --cat-shopping: #ff6fc0;
+    --cat-enfants: #ffe01a;
+    --cat-cadeaux: #9c6a3a;
+    --cat-autre: #636366;
+    --cat-autre-ink: #ffffff;
+  }
+}
+:root[data-theme="dark"] {
+  --cat-alimentation: #32d74b;
+  --cat-restaurants: #ff9500;
+  --cat-loisirs: #c25cf5;
+  --cat-transport: #0a84ff;
+  --cat-logement: #4a3ae0;
+  --cat-abonnements: #2fd6e3;
+  --cat-sante: #ff453a;
+  --cat-shopping: #ff6fc0;
+  --cat-enfants: #ffe01a;
+  --cat-cadeaux: #9c6a3a;
+  --cat-autre: #636366;
+  --cat-autre-ink: #ffffff;
+}
+
+.cat-alimentation { --cat: var(--cat-alimentation); }
+.cat-restaurants { --cat: var(--cat-restaurants); }
+.cat-loisirs { --cat: var(--cat-loisirs); }
+.cat-transport { --cat: var(--cat-transport); }
+.cat-logement { --cat: var(--cat-logement); }
+.cat-abonnements { --cat: var(--cat-abonnements); }
+.cat-sante { --cat: var(--cat-sante); }
+.cat-shopping { --cat: var(--cat-shopping); }
+.cat-enfants { --cat: var(--cat-enfants); --cat-ink: #1c1c1e; }
+.cat-cadeaux { --cat: var(--cat-cadeaux); }
+.cat-autre { --cat: var(--cat-autre); --cat-ink: var(--cat-autre-ink); }
+
+/* Pastille : rond de couleur, icône blanche (foncée sur le jaune et le gris clair). */
+.cat-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--cat);
+  color: var(--cat-ink, #ffffff);
+}
+.cat-badge svg { width: 20px; height: 20px; stroke-width: 2; }
+.cat-badge-large { width: 52px; height: 52px; }
+.cat-badge-large svg { width: 28px; height: 28px; }
+
+/* Dans les lignes de dépense : pastille à gauche, le texte prend la place restante. */
+.expense-row > .cat-badge + .expense-main { flex: 1; }
+.expense-row > .cat-badge + .expense-main + .expense-amount { margin-left: auto; }
+.is-planned .cat-badge { opacity: 0.55; }
+
+/* Saisie : pastille à gauche du libellé (un appui ouvre la grille). */
+.label-row { display: flex; align-items: center; gap: 10px; }
+.label-row .label-field { flex: 1; min-width: 0; }
+.cat-button { flex-shrink: 0; border-radius: 50%; }
+.cat-button .cat-badge { width: 44px; height: 44px; }
+.cat-button .cat-badge svg { width: 23px; height: 23px; }
+.cat-button[aria-expanded="true"] .cat-badge { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--fg); }
+
+/* Grille de choix */
+.cat-field { display: flex; flex-direction: column; gap: 10px; }
+.cat-caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 4px;
+  padding: 4px 0;
+}
+.cat-grid[hidden] { display: none; }
+.cat-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.cat-option span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-option .cat-badge { width: 46px; height: 46px; transition: box-shadow 0.15s ease; }
+.cat-option .cat-badge svg { width: 22px; height: 22px; }
+.cat-option[aria-pressed="true"] { color: var(--fg); font-weight: 700; }
+.cat-option[aria-pressed="true"] .cat-badge { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5.5px var(--fg); }
+
+/* Récap : carte « Par catégorie » */
+.cat-card { margin-bottom: 22px; padding: 16px 0 6px; }
+.cat-card .cat-caption { padding: 0 18px; }
+.donut-wrap { position: relative; width: 176px; height: 176px; margin: 14px auto 8px; }
+.donut { width: 100%; height: 100%; }
+.donut-arc {
+  fill: none;
+  stroke: var(--cat);
+  stroke-width: 20;
+  stroke-linecap: butt;
+  cursor: pointer;
+}
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.donut-count { font-family: var(--font-rounded); font-size: 24px; font-weight: 700; }
+.donut-unit { color: var(--muted); font-size: 12px; font-weight: 500; }
+
+.cat-legend { list-style: none; margin: 0; padding: 0; }
+.cat-legend li { border-top: 0.5px solid var(--separator); }
+.cat-legend-row {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px 8px 18px;
+  text-align: left;
+}
+.cat-legend-row:active { background: var(--surface-2); }
+.cat-legend-row .cat-badge { width: 32px; height: 32px; }
+.cat-legend-row .cat-badge svg { width: 18px; height: 18px; }
+.cat-legend-name { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.cat-legend-amount {
+  font-family: var(--font-rounded);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.cat-legend-pct {
+  width: 44px;
+  text-align: right;
+  color: var(--muted);
+  font-family: var(--font-rounded);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.cat-legend-chevron { width: 14px; height: 14px; color: var(--muted); stroke-width: 2.4; flex-shrink: 0; }
+
+/* Feuille de détail d'une catégorie */
+.cat-summary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 14px;
+  margin-bottom: 18px;
+}
+#cat-sheet-badge { grid-row: 1 / span 2; display: flex; }
+.cat-summary-month { color: var(--muted); font-size: 14px; font-weight: 500; }
+.cat-summary-total { font-family: var(--font-rounded); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }

@@ -1,9 +1,10 @@
 // Dépenses récurrentes (loyer, abonnement…) et génération des dépenses prévues de chaque mois.
 //
-// Fiche chiffrée : { type: 'recurring', v: 1, amount, label, day, start, last }
+// Fiche chiffrée : { type: 'recurring', v: 1, amount, label, day, start, last, category? }
 //   day   : jour du mois (1 à 31) ; s'il n'existe pas dans le mois (ex. 31 en février) → dernier jour
 //   start : premier mois concerné « 2026-10 »
 //   last  : dernier mois déjà généré (ou null)
+//   category : catégorie choisie à la main (sinon devinée d'après le libellé), reprise par les dépenses créées
 //
 // Pas de traitement en arrière-plan possible : la génération se fait à chaque déverrouillage, avec
 // rattrapage des mois manqués, sans jamais créer de doublon.
@@ -48,19 +49,22 @@ export function list() {
 
 // Création : le mois en cours compte toujours, même si le jour est déjà passé (la dépense est alors
 // « à confirmer » : on la valide ou on la supprime).
-export async function create({ amount, label, day }) {
+export async function create({ amount, label, day, category }) {
   const start = currentMonth();
   const item = { id: newId(), type: 'recurring', v: 1, amount, label: label.trim(), day, start, last: null };
+  if (category) item.category = category;
   await store.saveValue(item);
   await generate();
   return item;
 }
 
 // Modification : n'affecte que les mois pas encore générés.
-export function update(id, { amount, label, day }) {
+export function update(id, { amount, label, day, category }) {
   const current = store.getRecurring(id);
   if (!current) throw new Error('Récurrente introuvable.');
-  return store.saveValue({ ...current, amount, label: label.trim(), day });
+  const item = { ...current, amount, label: label.trim(), day };
+  if (category) item.category = category;
+  return store.saveValue(item);
 }
 
 // Suppression : les dépenses déjà créées sont conservées.
@@ -89,7 +93,8 @@ export async function generate() {
           at: dayInMonth(month, rec.day) + 'T00:00:00',
           planned: true,
           recurringId: rec.id,
-          month
+          month,
+          category: rec.category
         });
         created++;
       }
@@ -118,7 +123,8 @@ export function projected(month) {
       at: dayInMonth(month, rec.day) + 'T00:00:00',
       planned: true,
       recurringId: rec.id,
-      month
+      month,
+      category: rec.category
     });
   }
   return out.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
@@ -136,7 +142,8 @@ export async function payInAdvance(virtualItem) {
     at: dayInMonth(virtualItem.month, rec.day) + 'T00:00:00',
     paid: true,
     recurringId: rec.id,
-    month: virtualItem.month
+    month: virtualItem.month,
+    category: rec.category
   });
 }
 
@@ -160,7 +167,8 @@ export async function createCurrentMonth(id) {
     at: dayInMonth(month, rec.day) + 'T00:00:00',
     planned: true,
     recurringId: rec.id,
-    month
+    month,
+    category: rec.category
   });
   if (!rec.last || rec.last < month) await store.saveValue({ ...store.getRecurring(id), last: month });
   return item;

@@ -3,19 +3,22 @@
 // Chaque fiche de la base (magasin « records ») est chiffrée :
 //   en clair : { id, box }            (identifiant aléatoire + contenu chiffré)
 //   chiffré  : une dépense            { type: 'expense', v: 1, amount, label, at, planned?, recurringId?, month? }
-//              ou une récurrente       { type: 'recurring', v: 1, amount, label, day, start, last }  (voir recurring.js)
+//              ou une récurrente       { type: 'recurring', v: 1, amount, label, day, start, last, category? }  (voir recurring.js)
+//              ou une règle de catégorie { type: 'rule', v: 1, key, category }  (correction apprise, voir plus bas)
 //     amount : centimes entiers > 0
 //     label  : texte libre, obligatoire
 //     at     : date et heure locales « 2026-10-04T10:24:37 »
 //     planned: true pour une dépense « prévue » (hors de tous les totaux) jusqu'à confirmation « Payée »
 //     card   : 'debit' = « déjà réglé » (vert) ; 'credit' = à régler (rouge, par défaut).
 //              Absent (anciennes fiches) : « déjà réglé » pour une dépense de récurrente, à régler sinon.
+//     category: catégorie choisie à la main (voir categories.js). Absente : catégorie devinée d'après le libellé.
 // Les données déchiffrées ne vivent qu'en mémoire, tant que l'app est déverrouillée.
 
 import * as db from './db.js';
 import { encryptRecord, decryptRecord, newId } from './crypto.js';
 import { getDataKey } from './vault.js';
 import { dayOf, today, MAX_CENTS } from './format.js';
+import { isCategory, normalizeLabel, guessFromKeywords } from './categories.js';
 
 export const MAX_LABEL = 100;
 
@@ -24,6 +27,7 @@ const MONTH = /^\d{4}-\d{2}$/;
 
 let expenses = new Map();
 let recurrings = new Map();
+let rules = new Map();      // libellé normalisé → { id, category }
 let unreadable = 0;
 
 function validAmountLabel(v) {
@@ -31,8 +35,14 @@ function validAmountLabel(v) {
     typeof v.label === 'string' && v.label.trim() !== '' && v.label.length <= MAX_LABEL;
 }
 
+const validCategory = (c) => c === undefined || isCategory(c);
+
 export function isValid(v) {
   if (!v || typeof v !== 'object') return false;
+  if (!validCategory(v.category)) return false;
+  if (v.type === 'rule') {
+    return typeof v.key === 'string' && v.key !== '' && v.key.length <= MAX_LABEL && isCategory(v.category);
+  }
   if (v.type === 'expense') {
     return validAmountLabel(v) && typeof v.at === 'string' && STAMP.test(v.at) &&
       (v.planned === undefined || typeof v.planned === 'boolean') &&
@@ -51,6 +61,7 @@ export function isValid(v) {
 function keep(id, value) {
   if (value.type === 'expense') expenses.set(id, { id, ...value });
   else if (value.type === 'recurring') recurrings.set(id, { id, ...value });
+  else if (value.type === 'rule') rules.set(value.key, { id, category: value.category });
 }
 
 // Déchiffre toutes les fiches (au déverrouillage).
@@ -59,6 +70,7 @@ export async function load() {
   const records = await db.getAllRecords();
   expenses = new Map();
   recurrings = new Map();
+  rules = new Map();
   unreadable = 0;
   for (const record of records) {
     try {
@@ -79,6 +91,7 @@ export function unreadableCount() {
 export function clear() {
   expenses = new Map();
   recurrings = new Map();
+  rules = new Map();
 }
 
 // Enregistre une fiche (dépense ou récurrente), chiffrée.
@@ -95,15 +108,17 @@ export async function deleteValue(id) {
   await db.deleteRecord(id);
   expenses.delete(id);
   recurrings.delete(id);
+  for (const [key, rule] of rules) if (rule.id === id) rules.delete(key);
 }
 
 // --- Dépenses ---
 
 // Une dépense créée sur une date future est « prévue ».
 // paid : dépense déjà réglée même si sa date est future (récurrente payée d'avance).
-export function add({ amount, label, at, planned, paid, recurringId, month, card }) {
+export function add({ amount, label, at, planned, paid, recurringId, month, card, category }) {
   const item = { id: newId(), type: 'expense', v: 1, amount, label: label.trim(), at };
   if (card) item.card = card;
+  if (category) item.category = category;
   if (!paid && (planned || dayOf(at) > today())) item.planned = true;
   if (recurringId) item.recurringId = recurringId;
   if (month) item.month = month;
@@ -111,11 +126,13 @@ export function add({ amount, label, at, planned, paid, recurringId, month, card
 }
 
 // Modifier la date vers le futur rend la dépense « prévue » ; une prévue le reste jusqu'à « Payée ».
-export function update(id, { amount, label, at, card }) {
+// category : catégorie choisie à la main (absente : celle de la fiche est conservée).
+export function update(id, { amount, label, at, card, category }) {
   const current = expenses.get(id);
   if (!current) throw new Error('Dépense introuvable.');
   const item = { ...current, amount, label: label.trim(), at };
   if (card) item.card = card;
+  if (category) item.category = category;
   if (dayOf(at) > today()) item.planned = true;
   return saveValue(item);
 }
@@ -194,4 +211,28 @@ export function getRecurring(id) {
 // « Déjà réglé » (vert) ? Sinon à régler (rouge).
 export function isDebit(e) {
   return e.card ? e.card === 'debit' : Boolean(e.recurringId);
+}
+
+// --- Catégories ---
+
+// Catégorie devinée pour un libellé : d'abord les corrections de l'utilisateur, puis les mots-clés.
+export function guessCategory(label) {
+  const rule = rules.get(normalizeLabel(label));
+  return rule ? rule.category : guessFromKeywords(label);
+}
+
+// Catégorie affichée : choisie à la main, sinon devinée.
+export function categoryOf(item) {
+  return item.category || guessCategory(item.label);
+}
+
+// L'utilisateur a choisi une catégorie à la main : elle est retenue pour ce libellé. Les dépenses de même
+// libellé sans catégorie choisie la prennent aussi. La règle est chiffrée comme les dépenses.
+export async function learnCategory(label, category) {
+  const key = normalizeLabel(label);
+  if (!key || !isCategory(category)) return;
+  const current = rules.get(key);
+  if (current && current.category === category) return;
+  if (!current && guessFromKeywords(label) === category) return;
+  await saveValue({ id: current ? current.id : newId(), type: 'rule', v: 1, key: key.slice(0, MAX_LABEL), category });
 }

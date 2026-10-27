@@ -3,10 +3,13 @@
 import * as recurring from '../recurring.js';
 import { formatAmount, parseAmount, centsToInput, formatShortDate, dayOf } from '../format.js';
 import { confirmDialog, alertDialog } from './dialog.js';
-import { $, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
+import * as expenses from '../expenses.js';
+import { categoryBadge } from '../categories.js';
+import { $, attachAmountFilter, fitAmount, categoryPicker, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
 
 let editingId = null;
 let onChange = () => {};
+let picker = null;
 
 export function render() {
   const ul = $('recurring-list');
@@ -30,7 +33,7 @@ export function render() {
     const amount = document.createElement('span');
     amount.className = 'expense-amount';
     amount.textContent = formatAmount(rec.amount);
-    button.append(main, amount);
+    button.append(categoryBadge(expenses.categoryOf(rec)), main, amount);
     button.addEventListener('click', () => openSheet(rec.id));
     li.appendChild(button);
     ul.appendChild(li);
@@ -46,6 +49,7 @@ function openSheet(id) {
   fitAmount($('rec-amount'));
   $('rec-label').value = rec ? rec.label : '';
   $('rec-day').value = rec ? String(rec.day) : '';
+  picker.reset(rec ? rec.category : undefined);
   $('rec-error').textContent = '';
   $('rec-edit-note').hidden = !rec;
   $('btn-rec-delete').hidden = !rec;
@@ -70,8 +74,10 @@ async function onSave(event) {
   if (!label) { error.textContent = LABEL_ERROR; return; }
   if (!(day >= 1 && day <= 31)) { error.textContent = 'Choisis le jour du mois (1 à 31).'; return; }
   try {
-    if (editingId) await recurring.update(editingId, { amount, label, day });
-    else await recurring.create({ amount, label, day });
+    const category = picker.chosen();
+    if (editingId) await recurring.update(editingId, { amount, label, day, category });
+    else await recurring.create({ amount, label, day, category });
+    if (category) await expenses.learnCategory(label, category);
     closeSheet();
     onChange();
   } catch (err) {
@@ -123,6 +129,7 @@ export function init(callbacks) {
     select.appendChild(option);
   }
   attachAmountFilter($('rec-amount'));
+  picker = categoryPicker($('rec-categories'), $('rec-label'));
   $('btn-rec-add').addEventListener('click', () => openSheet(null));
   $('rec-form').addEventListener('submit', onSave);
   $('btn-rec-cancel').addEventListener('click', closeSheet);

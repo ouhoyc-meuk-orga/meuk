@@ -5,10 +5,14 @@ import * as expenses from '../expenses.js';
 import {
   formatAmount, formatMonthShort, formatLongDate, parseAmount, toLocalStamp, dayToDate, today, addDays, timeOf, normalizeTime
 } from '../format.js';
-import { $, expenseRow, attachAmountFilter, fitAmount, AMOUNT_ERROR, LABEL_ERROR, errorText } from './common.js';
+import {
+  $, expenseRow, attachAmountFilter, fitAmount, categoryPicker, AMOUNT_ERROR, LABEL_ERROR, errorText
+} from './common.js';
+import { categoryBadge, categoryName } from '../categories.js';
 
 let currentDay = today();
 let onChange = () => {};
+let addPicker = null;
 
 export function setDay(day) {
   currentDay = day;
@@ -80,9 +84,14 @@ async function onAdd(event) {
   error.textContent = '';
   try {
     // Par défaut : à régler (rouge). « Déjà réglé » activé : vert.
-    const saved = await expenses.add({ amount, label, at, card: $('add-debit').checked ? 'debit' : 'credit' });
+    const category = addPicker.chosen();
+    const saved = await expenses.add({ amount, label, at, card: $('add-debit').checked ? 'debit' : 'credit', category });
+    if (category) await expenses.learnCategory(label, category);
     amountInput.value = '';
     labelInput.value = '';
+    addPicker.reset();
+    $('add-categories').hidden = true;
+    $('add-cat').setAttribute('aria-expanded', 'false');
     fitAmount(amountInput);
     $('add-debit').checked = false;
     if (document.activeElement) document.activeElement.blur();
@@ -95,6 +104,26 @@ async function onAdd(event) {
 export function init(callbacks) {
   onChange = callbacks.onChange;
   attachAmountFilter($('add-amount'));
+  // Pastille à gauche du libellé : catégorie devinée pendant la saisie ; un appui ouvre la grille.
+  addPicker = categoryPicker($('add-categories'), $('add-label'), (id) => {
+    const button = $('add-cat');
+    button.textContent = '';
+    button.appendChild(categoryBadge(id));
+    button.setAttribute('aria-label', 'Catégorie : ' + categoryName(id) + ' (changer)');
+  });
+  addPicker.reset();
+  $('add-cat').addEventListener('click', () => {
+    const open = $('add-categories').hidden;
+    $('add-categories').hidden = !open;
+    $('add-cat').setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  // Choisir une catégorie referme la grille.
+  $('add-categories').addEventListener('click', (event) => {
+    if (event.target.closest('.cat-option')) {
+      $('add-categories').hidden = true;
+      $('add-cat').setAttribute('aria-expanded', 'false');
+    }
+  });
   $('add-form').addEventListener('submit', onAdd);
   // « Suivant » sur le clavier du montant passe au libellé.
   $('add-amount').addEventListener('keydown', (event) => {

@@ -3,6 +3,7 @@
 import * as expenses from '../expenses.js';
 import { payInAdvance } from '../recurring.js';
 import { confirmDialog, alertDialog, showToast } from './dialog.js';
+import { CATEGORIES, categoryBadge } from '../categories.js';
 import {
   formatAmount, cleanAmountInput, parseAmount, centsToInput, dayOf, timeOf, formatShortDate, normalizeTime
 } from '../format.js';
@@ -14,6 +15,7 @@ export const LABEL_ERROR = 'Indique un libellé.';
 
 let onChange = () => {};
 let editingId = null;
+let editPicker = null;
 
 export function errorText(prefix, err) {
   return prefix + (err && err.message ? err.message : String(err));
@@ -94,6 +96,7 @@ export function expenseRow(expense, mode, { isNew = false, swipe = false } = {})
   const fromRecurring = Boolean(expense.recurringId) && timeOf(expense.at) === '00:00:00';
   const main = document.createElement('span');
   main.className = 'expense-main';
+  button.appendChild(categoryBadge(expenses.categoryOf(expense)));
   if (mode === 'day') {
     main.append(span('expense-label', expense.label),
       span('expense-time', fromRecurring ? 'Récurrente' : timeOf(expense.at)));
@@ -275,6 +278,50 @@ export async function confirmPaid(id) {
   }
 }
 
+// --- Choix de la catégorie (grille d'icônes) ---
+// La catégorie devinée suit le libellé tant que l'utilisateur n'en a pas choisi une à la main.
+
+export function categoryPicker(container, labelInput, onSelect = () => {}) {
+  const buttons = new Map();
+  let selected = null;
+  let manual = false;
+  let explicit = null;     // catégorie déjà choisie à la main pour la fiche modifiée
+  const select = (id) => {
+    selected = id;
+    for (const [key, button] of buttons) button.setAttribute('aria-pressed', key === id ? 'true' : 'false');
+    onSelect(id);
+  };
+  for (const cat of CATEGORIES) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'cat-option';
+    const name = document.createElement('span');
+    name.textContent = cat.name;
+    button.append(categoryBadge(cat.id), name);
+    button.addEventListener('click', () => { manual = true; select(cat.id); });
+    buttons.set(cat.id, button);
+    container.appendChild(button);
+  }
+  labelInput.addEventListener('input', () => {
+    if (!manual && !explicit) select(expenses.guessCategory(labelInput.value));
+  });
+  return {
+    // category : catégorie choisie à la main pour cette fiche (ou rien : devinée d'après le libellé).
+    reset(category) {
+      manual = false;
+      explicit = category || null;
+      select(category || expenses.guessCategory(labelInput.value));
+    },
+    // Catégorie à enregistrer : seulement si elle a été choisie à la main (maintenant ou avant).
+    chosen() {
+      return manual ? selected : undefined;
+    },
+    value() {
+      return selected;
+    }
+  };
+}
+
 // --- Feuille de modification (commune à tous les écrans) ---
 
 export function openEdit(id) {
@@ -287,6 +334,7 @@ export function openEdit(id) {
   $('edit-date').value = dayOf(expense.at);
   $('edit-time').value = timeOf(expense.at);
   $('edit-debit').checked = expenses.isDebit(expense);
+  editPicker.reset(expense.category);
   $('edit-error').textContent = '';
   $('edit-planned-note').hidden = !expense.planned;
   $('btn-edit-paid').hidden = !expense.planned;
@@ -317,9 +365,11 @@ async function onSave(event) {
   const time = normalizeTime(raw);
   if (!time) { error.textContent = 'Indique une heure.'; return; }
   try {
+    const category = editPicker.chosen();
     await expenses.update(editingId, {
-      amount, label, at: day + 'T' + time, card: $('edit-debit').checked ? 'debit' : 'credit'
+      amount, label, at: day + 'T' + time, card: $('edit-debit').checked ? 'debit' : 'credit', category
     });
+    if (category) await expenses.learnCategory(label, category);
     closeEdit();
     onChange();
   } catch (err) {
@@ -355,6 +405,7 @@ async function onDelete() {
 export function initCommon(callbacks) {
   onChange = callbacks.onChange;
   attachAmountFilter($('edit-amount'));
+  editPicker = categoryPicker($('edit-categories'), $('edit-label'));
   $('edit-form').addEventListener('submit', onSave);
   $('btn-edit-cancel').addEventListener('click', closeEdit);
   $('btn-edit-delete').addEventListener('click', onDelete);

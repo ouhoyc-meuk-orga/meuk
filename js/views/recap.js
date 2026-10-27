@@ -7,7 +7,7 @@ import * as expenses from '../expenses.js';
 import { formatAmount, formatMonth, formatDayOfMonth, dayOf, today } from '../format.js';
 import { currentMonth, nextMonth, previousMonth, projected } from '../recurring.js';
 import { $, expenseRow } from './common.js';
-import { CATEGORIES, categoryBadge, categoryName } from '../categories.js';
+import { allCategories, categoryBadge, categoryName, colorClass } from '../categories.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 let openCategory = null;   // catégorie affichée dans la feuille de détail (ou null)
@@ -126,7 +126,7 @@ function byCategory(real) {
     const id = expenses.categoryOf(e);
     sums.set(id, (sums.get(id) || 0) + e.amount);
   }
-  const order = CATEGORIES.map((c) => c.id);
+  const order = allCategories().map((c) => c.id);
   return [...sums].sort((a, b) => b[1] - a[1] || order.indexOf(a[0]) - order.indexOf(b[0]));
 }
 
@@ -154,7 +154,7 @@ function renderCategories(real) {
   for (const [id, sum] of parts) {
     const length = (sum / total) * circumference;
     const arc = document.createElementNS(SVG_NS, 'circle');
-    arc.setAttribute('class', 'donut-arc cat-' + id);
+    arc.setAttribute('class', 'donut-arc ' + colorClass(id));
     arc.setAttribute('cx', '80');
     arc.setAttribute('cy', '80');
     arc.setAttribute('r', String(r));

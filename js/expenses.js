@@ -5,6 +5,8 @@
 //   chiffré  : une dépense            { type: 'expense', v: 1, amount, label, at, planned?, recurringId?, month? }
 //              ou une récurrente       { type: 'recurring', v: 1, amount, label, day, start, last, category? }  (voir recurring.js)
 //              ou une règle de catégorie { type: 'rule', v: 1, key, category }  (correction apprise, voir plus bas)
+//              ou un réglage de catégorie { type: 'category', v: 1, catId, color, name?, icon?, custom? }
+//                (couleur choisie, ou catégorie créée par l'utilisateur ; voir categories.js)
 //     amount : centimes entiers > 0
 //     label  : texte libre, obligatoire
 //     at     : date et heure locales « 2026-10-04T10:24:37 »
@@ -18,7 +20,8 @@ import * as db from './db.js';
 import { encryptRecord, decryptRecord, newId } from './crypto.js';
 import { getDataKey } from './vault.js';
 import { dayOf, today, MAX_CENTS } from './format.js';
-import { isCategory, normalizeLabel, guessFromKeywords } from './categories.js';
+import * as cats from './categories.js';
+import { normalizeLabel, guessFromKeywords } from './categories.js';
 
 export const MAX_LABEL = 100;
 
@@ -35,13 +38,23 @@ function validAmountLabel(v) {
     typeof v.label === 'string' && v.label.trim() !== '' && v.label.length <= MAX_LABEL;
 }
 
-const validCategory = (c) => c === undefined || isCategory(c);
+// Une catégorie inconnue (ex. catégorie personnelle supprimée) reste valide : la dépense est alors
+// classée automatiquement, comme si elle n'en avait pas.
+const validCategory = (c) => c === undefined || cats.isCategoryId(c);
+
+function validCategorySetting(v) {
+  if (!cats.isCategoryId(v.catId) || !cats.isPaletteKey(v.color)) return false;
+  if (v.custom === undefined) return v.name === undefined && v.icon === undefined;
+  return v.custom === true && typeof v.name === 'string' && v.name.trim() !== '' &&
+    v.name.length <= cats.MAX_CATEGORY_NAME && cats.isIconKey(v.icon);
+}
 
 export function isValid(v) {
   if (!v || typeof v !== 'object') return false;
+  if (v.type === 'category') return validCategorySetting(v);
   if (!validCategory(v.category)) return false;
   if (v.type === 'rule') {
-    return typeof v.key === 'string' && v.key !== '' && v.key.length <= MAX_LABEL && isCategory(v.category);
+    return typeof v.key === 'string' && v.key !== '' && v.key.length <= MAX_LABEL && v.category !== undefined;
   }
   if (v.type === 'expense') {
     return validAmountLabel(v) && typeof v.at === 'string' && STAMP.test(v.at) &&
@@ -62,6 +75,7 @@ function keep(id, value) {
   if (value.type === 'expense') expenses.set(id, { id, ...value });
   else if (value.type === 'recurring') recurrings.set(id, { id, ...value });
   else if (value.type === 'rule') rules.set(value.key, { id, category: value.category });
+  else if (value.type === 'category') cats.applySetting(id, value);
 }
 
 // Déchiffre toutes les fiches (au déverrouillage).
@@ -71,6 +85,7 @@ export async function load() {
   expenses = new Map();
   recurrings = new Map();
   rules = new Map();
+  cats.resetSettings();
   unreadable = 0;
   for (const record of records) {
     try {
@@ -92,6 +107,7 @@ export function clear() {
   expenses = new Map();
   recurrings = new Map();
   rules = new Map();
+  cats.resetSettings();
 }
 
 // Enregistre une fiche (dépense ou récurrente), chiffrée.
@@ -109,6 +125,7 @@ export async function deleteValue(id) {
   expenses.delete(id);
   recurrings.delete(id);
   for (const [key, rule] of rules) if (rule.id === id) rules.delete(key);
+  cats.forgetSetting(id);
 }
 
 // --- Dépenses ---
@@ -218,21 +235,51 @@ export function isDebit(e) {
 // Catégorie devinée pour un libellé : d'abord les corrections de l'utilisateur, puis les mots-clés.
 export function guessCategory(label) {
   const rule = rules.get(normalizeLabel(label));
-  return rule ? rule.category : guessFromKeywords(label);
+  return rule && cats.isCategory(rule.category) ? rule.category : guessFromKeywords(label);
 }
 
 // Catégorie affichée : choisie à la main, sinon devinée.
 export function categoryOf(item) {
-  return item.category || guessCategory(item.label);
+  return item.category && cats.isCategory(item.category) ? item.category : guessCategory(item.label);
 }
 
 // L'utilisateur a choisi une catégorie à la main : elle est retenue pour ce libellé. Les dépenses de même
 // libellé sans catégorie choisie la prennent aussi. La règle est chiffrée comme les dépenses.
 export async function learnCategory(label, category) {
   const key = normalizeLabel(label);
-  if (!key || !isCategory(category)) return;
+  if (!key || !cats.isCategory(category)) return;
   const current = rules.get(key);
   if (current && current.category === category) return;
   if (!current && guessFromKeywords(label) === category) return;
   await saveValue({ id: current ? current.id : newId(), type: 'rule', v: 1, key: key.slice(0, MAX_LABEL), category });
+}
+
+// --- Réglages des catégories ---
+
+// Couleur d'une catégorie intégrée, ou création / modification d'une catégorie personnelle.
+// Renvoie l'identifiant de la catégorie.
+export async function saveCategory({ catId, color, name, icon }) {
+  const current = catId ? cats.settingFor(catId) : undefined;
+  const existing = catId ? cats.getCategory(catId) : undefined;
+  if (catId && !existing) throw new Error('Catégorie introuvable.');
+  if (!existing && cats.customCount() >= cats.MAX_CUSTOM_CATEGORIES) {
+    throw new Error('Nombre maximal de catégories atteint (' + cats.MAX_CUSTOM_CATEGORIES + ').');
+  }
+  let value;
+  if (existing && !existing.custom) {
+    value = { type: 'category', v: 1, catId, color };
+  } else {
+    const clean = String(name || '').trim().slice(0, cats.MAX_CATEGORY_NAME);
+    if (!clean) throw new Error('Indique un nom.');
+    value = { type: 'category', v: 1, catId: catId || 'perso-' + newId().slice(0, 16), color, name: clean, icon, custom: true };
+  }
+  await saveValue({ id: current ? current.recordId : newId(), ...value });
+  return value.catId;
+}
+
+// Supprime une catégorie personnelle (ou remet la couleur d'origine d'une catégorie intégrée).
+// Les dépenses et les règles qui y menaient sont classées automatiquement à nouveau.
+export async function deleteCategorySetting(catId) {
+  const current = cats.settingFor(catId);
+  if (current) await deleteValue(current.recordId);
 }

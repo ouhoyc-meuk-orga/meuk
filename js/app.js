@@ -7,13 +7,14 @@ import * as vault from './vault.js';
 import * as expenses from './expenses.js';
 import { generate } from './recurring.js';
 import * as security from './views/security.js';
-import { initCommon, closeEdit } from './views/common.js';
+import { initCommon, closeEdit, refreshPickers } from './views/common.js';
 import { initDialogs, cancelDialog, hideToast } from './views/dialog.js';
 import * as todayView from './views/today.js';
 import * as historyView from './views/history.js';
 import * as recapView from './views/recap.js';
 import * as recurringView from './views/recurring.js';
 import * as settingsView from './views/settings.js';
+import * as catSettingsView from './views/catsettings.js';
 import { startAutoLock, stopAutoLock } from './lock.js';
 
 const $ = (id) => document.getElementById(id);
@@ -36,10 +37,12 @@ function showView(id) {
 
 // Après chaque changement de données : tous les écrans sont redessinés (rapide, tout est en mémoire).
 function refresh(newId) {
+  refreshPickers();
   todayView.render(newId);
   historyView.render();
   recapView.render();
   recurringView.render();
+  catSettingsView.render();
 }
 
 function closeSheets() {
@@ -49,6 +52,7 @@ function closeSheets() {
   recurringView.closeSheet();
   settingsView.closeAll();
   recapView.closeCategorySheet();
+  catSettingsView.closeSheet();
   $('due-sheet').hidden = true;
 }
 
@@ -133,6 +137,7 @@ todayView.init({ onChange: refresh });
 recapView.init();
 recurringView.init({ onChange: () => refresh() });
 settingsView.init({ onChange: () => refresh(), onErased });
+catSettingsView.init({ onChange: () => refresh() });
 $('btn-settings').addEventListener('click', () => settingsView.open());
 $('btn-lock-now').addEventListener('click', () => {
   stopAutoLock();

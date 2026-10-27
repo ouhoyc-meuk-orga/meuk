@@ -132,7 +132,11 @@
           <input id="add-amount" type="text" inputmode="decimal" placeholder="0,00" enterkeyhint="next" autocomplete="off" aria-label="Montant">
           <span class="currency" aria-hidden="true">€</span>
         </label>
-        <input id="add-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+        <div class="label-row">
+          <button id="add-cat" type="button" class="cat-button" aria-expanded="false" aria-controls="add-categories"></button>
+          <input id="add-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+        </div>
+        <div id="add-categories" class="cat-grid" hidden></div>
         <label id="add-time-field" class="field inline-field" hidden>
           <span>Heure</span>
           <input id="add-time" type="time" step="1">
@@ -179,6 +183,14 @@
         <span id="recap-total" class="recap-total"></span>
         <span id="recap-count" class="recap-caption"></span>
       </div>
+      <section id="recap-cats" class="card cat-card" aria-labelledby="recap-cats-title" hidden>
+        <h2 id="recap-cats-title" class="cat-caption">Par catégorie</h2>
+        <div class="donut-wrap">
+          <svg id="recap-donut" class="donut" viewBox="0 0 160 160" aria-hidden="true"></svg>
+          <div class="donut-center"><span id="recap-cat-count" class="donut-count"></span><span id="recap-cat-unit" class="donut-unit"></span></div>
+        </div>
+        <ul id="recap-cat-list" class="cat-legend"></ul>
+      </section>
       <ul id="recap-days" class="list expense-list"></ul>
       <h2 id="recap-due-title" class="section-title" hidden>Date passée — à confirmer</h2>
       <ul id="recap-due" class="list expense-list"></ul>
@@ -213,6 +225,19 @@
     </button>
   </nav>
 
+  <section id="cat-sheet" class="sheet" aria-labelledby="cat-title" hidden>
+    <header class="sheet-header">
+      <h2 id="cat-title" class="sheet-title-small"></h2>
+      <button id="btn-cat-close" type="button" class="button-link">OK</button>
+    </header>
+    <div class="card cat-summary">
+      <span id="cat-sheet-badge"></span>
+      <span id="cat-sheet-month" class="cat-summary-month"></span>
+      <span id="cat-sheet-total" class="cat-summary-total"></span>
+    </div>
+    <ul id="cat-sheet-list" class="list expense-list"></ul>
+  </section>
+
   <section id="edit-sheet" class="sheet" aria-labelledby="edit-title" hidden>
     <header class="sheet-header">
       <h2 id="edit-title" class="sheet-title-small">Modifier</h2>
@@ -225,6 +250,10 @@
         <span class="currency" aria-hidden="true">€</span>
       </label>
       <input id="edit-label" class="label-field" type="text" placeholder="Libellé" maxlength="100" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+      <div class="cat-field">
+        <span class="cat-caption">Catégorie</span>
+        <div id="edit-categories" class="cat-grid"></div>
+      </div>
       <div class="datetime-fields">
         <label class="field"><span>Date</span><input id="edit-date" type="date"></label>
         <label class="field"><span>Heure</span><input id="edit-time" type="time" step="1"></label>
@@ -262,6 +291,10 @@
         <span class="currency" aria-hidden="true">€</span>
       </label>
       <input id="rec-label" class="label-field" type="text" placeholder="Libellé (loyer, abonnement…)" maxlength="100" autocomplete="off" autocapitalize="sentences" aria-label="Libellé">
+      <div class="cat-field">
+        <span class="cat-caption">Catégorie</span>
+        <div id="rec-categories" class="cat-grid"></div>
+      </div>
       <label class="field inline-field">
         <span>Jour du mois</span>
         <select id="rec-day"><option value="">—</option></select>

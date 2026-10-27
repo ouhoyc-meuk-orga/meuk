@@ -48,6 +48,7 @@ function closeSheets() {
   closeEdit();
   recurringView.closeSheet();
   settingsView.closeAll();
+  recapView.closeCategorySheet();
   $('due-sheet').hidden = true;
 }
 

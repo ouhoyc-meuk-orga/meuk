@@ -404,7 +404,7 @@ Idées de l'utilisateur, à rediscuter après sa période d'utilisation :
   Réglages), et utiliser l'onglet libéré pour une nouvelle section, peut-être une catégorie « Chrome »
   (mot à faire préciser par l'utilisateur : dictée possible de « Crédit » ?) qui suivra des consignes
   qu'il donnera.
-- **Vue d'ensemble du mois par catégories**, les catégories devant se faire **« un peu toutes seules »**.
+- ~~**Vue d'ensemble du mois par catégories**~~ → **fait en version 1.13.0** (section 22). Les catégories devant se faire **« un peu toutes seules »**.
   Contrainte de confidentialité : le classement automatique doit se faire **sur le téléphone**, sans
   service en ligne (par exemple des règles par mots-clés du libellé : « essence », « Carrefour »… →
   catégorie), éventuellement apprises à partir des corrections de l'utilisateur.
@@ -491,3 +491,28 @@ fermeture des feuilles en glissant, titres visibles au-dessus des champs, réact
   supprimer (comme dans l'Historique). Le jour reste déplié après une modification.
 - Changer de mois (ou rouvrir l'app) replie tout. Rien n'est enregistré : l'état ouvert/fermé ne vit
   qu'en mémoire.
+
+## 22. Version 1.13.0 — catégories et camembert (27 octobre 2026)
+
+- **11 catégories** (`js/categories.js`) : Alimentation, Restaurants, Loisirs, Transport, Logement,
+  Abonnements, Santé, Shopping, Enfants, Cadeaux, Autre. Chacune a une **icône au trait** dessinée pour
+  l'app (aucune bibliothèque externe) et une **couleur vive fixe**, la même partout (choix de
+  l'utilisateur, qui a écarté la contrainte daltonisme). Couleurs ajustées en mode nuit (`--cat-*`).
+- **Reconnaissance automatique, sur le téléphone** : liste de mots-clés (enseignes, mots courants). Le
+  mot-clé le plus long l'emporte (« Uber Eats » → Restaurants). Libellé inconnu → « Autre ».
+- **Corrections apprises** : choisir une catégorie à la main l'enregistre sur la dépense (champ
+  `category`) et crée une **règle** « libellé → catégorie », fiche chiffrée
+  `{ type: 'rule', v: 1, key, category }` (clé = libellé en minuscules, sans accents ni ponctuation).
+  Les dépenses de même libellé sans catégorie choisie suivent la règle. Une dépense sans catégorie
+  choisie est classée à l'affichage (pas de migration des anciennes dépenses).
+- Les prénoms ne figurent **pas** dans les mots-clés (le code est public) : « Mia » → Enfants vient d'une
+  correction de l'utilisateur, chiffrée sur son téléphone.
+- **Où** : pastille de couleur à gauche de chaque dépense (toutes les listes) et des récurrentes ;
+  saisie : pastille devinée pendant la frappe, un appui ouvre la grille ; fiche de modification et fiche
+  de récurrente : grille de choix. Une récurrente transmet sa catégorie aux dépenses qu'elle crée.
+- **Récap** : carte « Par catégorie » entre le total et les jours : anneau (une part par catégorie, dans
+  sa couleur) et liste triée par montant avec pourcentage. Seules les dépenses réelles comptent, comme
+  le total. Appui sur une part ou une ligne → feuille listant les dépenses du mois de cette catégorie
+  (modifiables, glisser pour supprimer).
+- Export CSV : colonne « Catégorie ». Sauvegardes chiffrées : les règles y sont incluses (une sauvegarde
+  1.13.0 ne peut pas être importée dans une version plus ancienne de l'app).

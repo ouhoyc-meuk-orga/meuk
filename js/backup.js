@@ -11,6 +11,7 @@ import { generate } from './recurring.js';
 import { getDataKey } from './vault.js';
 import { VERSION } from './version.js';
 import { dayOf, timeOf, today, centsToInput } from './format.js';
+import { categoryName } from './categories.js';
 
 const KIND = 'meuk-sauvegarde-chiffree';
 
@@ -165,7 +166,7 @@ function csvCell(text) {
 }
 
 export function buildCsv() {
-  const rows = [['Date', 'Heure', 'Libellé', 'Montant (€)', 'Statut', 'Déjà réglé']];
+  const rows = [['Date', 'Heure', 'Libellé', 'Catégorie', 'Montant (€)', 'Statut', 'Déjà réglé']];
   const list = store.all().sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
   for (const e of list) {
     const day = dayOf(e.at);
@@ -173,6 +174,7 @@ export function buildCsv() {
       day.slice(8, 10) + '/' + day.slice(5, 7) + '/' + day.slice(0, 4),
       timeOf(e.at),
       e.label,
+      categoryName(store.categoryOf(e)),
       centsToInput(e.amount),
       e.planned ? 'Prévue' : 'Payée',
       store.isDebit(e) ? 'Oui' : 'Non'

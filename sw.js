@@ -5,7 +5,7 @@
 'use strict';
 
 // Doit être identique à js/version.js.
-const VERSION = '1.12.0';
+const VERSION = '1.13.0';
 const CACHE = 'meuk-' + VERSION;
 
 const FILES = [
@@ -16,6 +16,7 @@ const FILES = [
   'js/app.js',
   'js/auth.js',
   'js/backup.js',
+  'js/categories.js',
   'js/crypto.js',
   'js/db.js',
   'js/expenses.js',

@@ -183,6 +183,14 @@
         <span id="recap-total" class="recap-total"></span>
         <span id="recap-count" class="recap-caption"></span>
       </div>
+      <div id="recap-settle" class="card settle-card" hidden>
+        <div class="settle-text">
+          <span class="credit-value settle-title"><svg class="sign" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h8M4 14h8M5 2v1.6c0 2.1 3 2.8 3 4.4s-3 2.3-3 4.4V14M11 2v1.6c0 2.1-3 2.8-3 4.4s3 2.3 3 4.4V14" stroke-width="1.6"/><path d="M6.4 4.2h3.2L8 6.4zM6.2 12.9h3.6c-.3-1.2-1.1-1.8-1.8-2.2-.7.4-1.5 1-1.8 2.2z" fill="currentColor" stroke="none"/></svg><span>Reste à régler</span></span>
+          <span id="settle-amount" class="settle-amount"></span>
+          <span id="settle-count" class="recap-caption"></span>
+        </div>
+        <button id="btn-settle" type="button" class="button-primary settle-button">Tout régler</button>
+      </div>
       <section id="recap-cats" class="card cat-card" aria-labelledby="recap-cats-title" hidden>
         <h2 id="recap-cats-title" class="cat-caption">Par catégorie</h2>
         <div class="donut-wrap">

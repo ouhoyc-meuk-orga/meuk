@@ -154,6 +154,24 @@ export function update(id, { amount, label, at, card, category }) {
   return saveValue(item);
 }
 
+// « Tout régler » (Récap) : dépenses RÉELLES d'un mois encore à régler (rouges). Les prévues, dont les
+// récurrentes pas encore payées, ne sont jamais concernées.
+export function toSettle(month) {
+  return forMonth(month).filter((e) => !e.planned && !isDebit(e));
+}
+
+// Passe en « déjà réglé » toutes les dépenses rouges du mois. Renvoie les fiches d'avant, pour « Annuler ».
+export async function settleMonth(month) {
+  const before = toSettle(month);
+  for (const e of before) await saveValue({ ...e, card: 'debit' });
+  return before;
+}
+
+// « Annuler » : remet les fiches exactement comme avant (seulement celles qui existent encore).
+export async function restore(items) {
+  for (const item of items) if (expenses.has(item.id)) await saveValue(item);
+}
+
 // Confirmation « Payée » : la dépense garde sa date et son heure prévues.
 export function confirmPaid(id) {
   const current = expenses.get(id);

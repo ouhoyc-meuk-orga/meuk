@@ -134,7 +134,7 @@ tabs.forEach((tab) => tab.addEventListener('click', () => {
 initDialogs();
 initCommon({ onChange: () => refresh() });
 todayView.init({ onChange: refresh });
-recapView.init();
+recapView.init({ onChange: () => refresh() });
 recurringView.init({ onChange: () => refresh() });
 settingsView.init({ onChange: () => refresh(), onErased });
 catSettingsView.init({ onChange: () => refresh() });

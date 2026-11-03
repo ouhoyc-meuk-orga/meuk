@@ -4,9 +4,10 @@
 // montrées à l'avance (et peuvent être payées d'avance).
 
 import * as expenses from '../expenses.js';
-import { formatAmount, formatMonth, formatDayOfMonth, dayOf, today } from '../format.js';
+import { formatAmount, formatMonth, formatMonthShort, formatDayOfMonth, dayOf, today } from '../format.js';
 import { currentMonth, nextMonth, previousMonth, projected } from '../recurring.js';
-import { $, expenseRow } from './common.js';
+import { $, expenseRow, errorText } from './common.js';
+import { confirmDialog, alertDialog, showToast } from './dialog.js';
 import { allCategories, categoryBadge, categoryName, colorClass } from '../categories.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -53,6 +54,7 @@ export function render() {
   $('recap-count').textContent = real.length === 0 ? 'Aucune dépense'
     : real.length === 1 ? '1 dépense' : real.length + ' dépenses';
   renderCategories(real);
+  renderSettle();
 
   const days = new Map();
   for (const e of real) {
@@ -116,6 +118,54 @@ export function render() {
   pl.textContent = '';
   coming.forEach((e) => pl.appendChild(expenseRow(e, 'upcoming')));
   $('recap-planned-title').hidden = coming.length === 0;
+}
+
+// --- « Tout régler » : les dépenses rouges du mois affiché, et seulement de ce mois ---
+
+let onChange = () => {};
+
+function renderSettle() {
+  const list = expenses.toSettle(month);
+  $('recap-settle').hidden = list.length === 0;
+  if (list.length === 0) return;
+  $('settle-amount').textContent = formatAmount(expenses.total(list));
+  $('settle-count').textContent = (list.length === 1 ? '1 dépense ' : list.length + ' dépenses ') +
+    formatMonthShort(month).replace(/^de /, 'en ').replace(/^d'/, 'en ');
+}
+
+async function onSettle() {
+  const target = month;
+  const list = expenses.toSettle(target);
+  if (list.length === 0) return;
+  const name = formatMonth(target).toLowerCase();
+  const ok = await confirmDialog({
+    title: 'Régler ' + name + ' ?',
+    message: (list.length === 1 ? 'La dépense à régler ' : 'Les ' + list.length + ' dépenses à régler ') +
+      formatMonthShort(target) + ' ' + target.slice(0, 4) + ' (' + formatAmount(expenses.total(list)) + ') ' +
+      (list.length === 1 ? 'passera' : 'passeront') + ' en « déjà réglé ». ' +
+      'Les dépenses prévues et les récurrentes non payées ne changent pas.',
+    confirmLabel: 'Régler ' + name.split(' ')[0]
+  });
+  if (!ok) return;
+  let before;
+  try {
+    before = await expenses.settleMonth(target);
+  } catch (err) {
+    onChange();
+    alertDialog('Règlement incomplet', errorText('', err));
+    return;
+  }
+  onChange();
+  const text = (before.length === 1 ? '1 dépense ' : before.length + ' dépenses ') +
+    formatMonthShort(target) + (before.length === 1 ? ' réglée' : ' réglées');
+  showToast(text, 'Annuler', async () => {
+    try {
+      await expenses.restore(before);
+      onChange();
+    } catch (err) {
+      alertDialog('Annulation impossible', errorText('', err));
+    }
+  }, 3000);
 }
 
 // --- Par catégorie : camembert (anneau) + liste ---
@@ -227,7 +277,9 @@ export function closeCategorySheet() {
   $('cat-sheet').hidden = true;
 }
 
-export function init() {
+export function init(callbacks = {}) {
+  if (callbacks.onChange) onChange = callbacks.onChange;
+  $('btn-settle').addEventListener('click', onSettle);
   $('btn-cat-close').addEventListener('click', closeCategorySheet);
   $('recap-prev').addEventListener('click', () => changeMonth(previousMonth(month)));
   $('recap-next').addEventListener('click', () => changeMonth(nextMonth(month)));

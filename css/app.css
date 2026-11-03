@@ -1276,3 +1276,23 @@ body:has(> .auth:not([hidden])) { background: #1f1d22; }
 }
 .icon-choice svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .icon-choice[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+/* Récap : « Reste à régler » + « Tout régler » (mois affiché seulement) */
+.settle-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 14px 14px 14px 18px;
+}
+.settle-card[hidden] { display: none; }
+.settle-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.settle-title { font-size: 15px; font-weight: 600; }
+.settle-amount {
+  color: var(--red);
+  font-family: var(--font-rounded);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.settle-button { width: auto; min-height: 44px; padding: 0 18px; border-radius: 12px; flex-shrink: 0; }
